@@ -11,7 +11,7 @@ from datasets import load_metric
 
 from tqdm.auto import tqdm
 
-from configuration import CONFIG
+from utils.configuration import CONFIG
 
 # Suppress warnings
 import warnings
@@ -45,6 +45,8 @@ def align_labels_with_tokens(tokens, labels):
     return new_labels
 
 #############################################################
+# tokenizer and dataloader
+
 def get_tokenizer(model_name= CONFIG.model_name):
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     return tokenizer
@@ -196,7 +198,7 @@ class NER_MODEL(nn.Module):
         return entity_logits
     
 ##################################################
-## Loss functions
+## Loss functions and metrics
 
 metric = load_metric("seqeval")
 def compute_metrics(logits, labels):
@@ -247,6 +249,7 @@ def token_loss_fn(logits, labels, attention_mask= None):
     return entity_loss
 
 ##################################################################
+## Optimizer and scheduler
 
 def get_optimizer(parameters, cfg= CONFIG):
     optimizer= AdamW(params=parameters, lr= cfg.learning_rate, weight_decay= cfg.weight_decay, eps= cfg.eps, betas= cfg.betas)
