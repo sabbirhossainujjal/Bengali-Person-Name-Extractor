@@ -4,19 +4,21 @@ class CONFIG:
     train= True #False #True
     debug= True #False #
     seed= 20
-    output_dir= "Models/"
-    data_path1_train= "/media/sabbir/E/Research/Bengali-NER/Dataset_1/Data/Input/train_data.txt"
-    data_path1_test= "/media/sabbir/E/Research/Bengali-NER/Dataset_1/Data/Input/test_data.txt"
-    data_path2= "/media/sabbir/E/Research/Bengali-NER/dataset_2.jsonl"
+    output_dir= "/media/sabbir/E/Research/Bengali-NER/Models/"
+    data_path1_train= "/media/sabbir/E/Research/Bengali-NER/Datasets/dataset_1_train.txt"
+    data_path1_test= "/media/sabbir/E/Research/Bengali-NER/Datasets/dataset_1_test.txt"
+    data_path2= "/media/sabbir/E/Research/Bengali-NER/Datasets/dataset_2.jsonl"
 
     n_folds= 3
     num_epochs= 100
     label_names=['O', 'B-PER', 'I-PER']
     num_labels= len(label_names)
     model_name= "nafi-zaman/celloscope-28000-ner-banglabert-finetuned" #"csebuetnlp/banglabert" #"nafi-zaman/mbert-finetuned-ner"#
+    model_checkpoint= "Models/best_model_0.bin"
     max_length= 500
     train_batch_size= 8
     valid_batch_size= 16
+    test_batch_size= 16
     num_workers= 2
     device= torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
     

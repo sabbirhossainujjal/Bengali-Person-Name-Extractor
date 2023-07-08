@@ -2,10 +2,10 @@ import pandas as pd
 import numpy as np
 import argparse
 
-from configuration import CONFIG
-from loading_dataset import readfile
-from data_preprocessing import remove_erroneous_entries, undersampling, train_validation_kfold
-from training_utils import get_tokenizer, Collate, prepare_loader, NER_MODEL, get_optimizer, fetch_scheduler, training_loop
+from utils.configuration import CONFIG
+from utils.loading_dataset import readfile
+from utils.data_preprocessing import remove_erroneous_entries, undersampling, train_validation_kfold
+from utils.training_utils import get_tokenizer, Collate, prepare_loader, NER_MODEL, get_optimizer, fetch_scheduler, training_loop
 
 def main():
     ##Run full training scripts from data loading to training steps.
@@ -53,13 +53,13 @@ def main():
 
     dataset= undersampling(dataset) ## Down-sampling of majority class data to prevent overfitting.
 
+    # taking a small datset for debuging
     if CONFIG.debug:
         data= dataset[['sentences', 'labels']][: CONFIG.dataset_size]
     else:
         data= dataset[['sentences', 'labels']]
 
     ## building kfold data of the dataset
-
     data = train_validation_kfold(data= data, n_folds= CONFIG.n_folds, seed= CONFIG.seed)
 
     # loading tokenizer and collate function
