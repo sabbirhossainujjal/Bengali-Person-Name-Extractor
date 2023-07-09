@@ -59,6 +59,7 @@ Dataset -1 contains annotation data in `.txt` file format. From this dataset rep
 
 ### Dataset-2 description:
 Dataset-2 contains data in `.jsonl` file format. This dataset is arranged in one file resides in <a href="https://github.com/banglakit/bengali-ner-data/blob/master/main.jsonl">master/main.jsonl</a>
+
 <br>`Total sentences in dataset-2 : 3545`
 <br>Annotation format in dataset-2:
 <br>["মো. নাহিদ হুসাইন নামের এক পরীক্ষার্থী অভিযোগ করেন, ইডেন মহিলা কলেজের পাঠাগার ভবনের দ্বিতীয় তলায় তাঁর পরীক্ষার আসন ছিল।", ["B-PERSON", "I-PERSON", "L-PERSON", "O", "O", "O", "O", "O", "O", "B-ORG", "I-ORG", "L-ORG", "O", "O", "O", "O", "O", "O", "O", "O", "O"]]
@@ -72,13 +73,27 @@ Dataset-2 contains data in `.jsonl` file format. This dataset is arranged in one
 
 #### Dataset loading and annotation:
 From the previous description we have seen that the two dataset are in two different format and their annotation format is totally different. So we have to pre-processe these data to convert these annotation to a common format. Moreover, there are some redundant annotations in the datasets like "ORG", "LOC" etc. We dont need these annotations. 
-
 <br> First we converted all the input text in a common format. Our intented format is sentence level i.e all tokens of a sentence are combined in sentence not tokenized like in dataset-1. For that we converted dataset-1 to out intented format.
+
 <br> For our person name extraction task we only need `B-PER`(Begining of the name), `I-PER`(Inside of the name), `O`(others). So we converted all the annotations in both dataset to our desired format.
+
 <br> Example:
 <br>`previous annotation`: ["B-PERSON", "I-PERSON", "L-PERSON", "O", "O", "O", "O", "O", "O", "B-ORG", "I-ORG", "L-ORG", "O", "O", "O", "O", "O", "O", "O", "O", "O"]
 <br>`new_annotation`: ["B-PER", "I-PER", "L-PER", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O"]]
 
-Coding for this data-loading and pre-processing is implemented in `loading_dataset.py`. After running this script we will have a dataframe format data for particular dataset which can be used later for training purpose.
+Coding for data-loading and pre-processing is implemented in `loading_dataset.py`. After running this script we will have a dataframe format data for particular dataset which can be used later for training purpose.
 
-#### 
+#### Exploratory Data Analysis (EDA)
+After loading our data we did some data analysis. First we check all the all the data have proper annotation, especially we checked every token in the given text have corresponding annotaion. If there are missing annotation in the dataset, this data can't be used in training. 
+<br> After analysing we found `1019` miss-match data in dataset-1 and `172` mis-match data in dataset-2. So we discarded these erroneous data from our datasets. 
+<br> Then we checked if there is any common entries in train test datasets. For our test dataset we used dataset-1 testing data. After checking we found `67` common entries in train, test dataset. So we removed these common data from test dataset, because these common data may introduce data-leakage problem in our experiment.
+
+<br> Next we check the distribution of our datasets. We checked how many input entries contains name entity. From my investigation, i found that there was not many name annotation data in the datasets. There were a huge imbalance in the datasets. The distribution of these datasets are given bellow.
+
+![]("Screenshots/data_distribution2.png")
+
+<br> From the distribution we found that there are not much data with person token so, we have combined both of these dataset to a single dataset for training. And to metigate data imbalance problem we `downsample` data without person token sothat it doesn't suffer overfitting problem.
+<br> After combining both of the data and downsampling majority class our dataset looks like the following ditribution.
+![](Screenshots/combined_data_distribution.png)
+
+
