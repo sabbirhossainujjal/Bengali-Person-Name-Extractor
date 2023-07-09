@@ -15,8 +15,48 @@ As this is a name entity extraction task, it was handled as token classification
 ## Datasets:
 For this  task two dataset were used. These are open source datasets which can be downloaded from the following links.
 
-Dataset-1: <a href= "https://github.com/Rifat1493/Bengali-NER/tree/master/annotated%20data"> [Rifat1493/Bengali-NER]
-<br> Dataset-2: <a href= "https://raw.githubusercontent.com/banglakit/bengali-ner-data/master/main.jsonl"> [banglakit/bengali-ner-data]
+Dataset-1: <a href= "https://github.com/Rifat1493/Bengali-NER/tree/master/annotated%20data"> [Rifat1493/Bengali-NER] </a>
+<br> Dataset-2: <a href= "https://raw.githubusercontent.com/banglakit/bengali-ner-data/master/main.jsonl"> [banglakit/bengali-ner-data] </a>
 
-Dataset-1 description: 
-Dataset -1 contains annotation data in `.txt` file format. From this dataset repository we take train_data.txt and test_data.txt file for our task. These files resides in <a href= "https://github.com/Rifat1493/Bengali-NER/blob/master/Input/train_data.txt">master/inptut/train_data.txt  and master/inptut/test_data.txt
+### Dataset-1 description: 
+Dataset -1 contains annotation data in `.txt` file format. From this dataset repository we take train_data.txt and test_data.txt file for our task. These files resides in <a href= "https://github.com/Rifat1493/Bengali-NER/blob/master/Input/train_data.txt"> master/inptut/train_data.txt </a> and <a href= "https://github.com/Rifat1493/Bengali-NER/blob/master/Input/test_data.txt">master/inptut/test_data.txt </a>.
+
+Annotation format in Dataset-1:
+লালপুর	B-LOC
+(	O
+নাটোর	B-LOC
+)	O
+প্রতিনিধি	O
+ব্রাহ্মণবাড়িয়া-২	B-LOC
+(	O
+সরাইল-আশুগঞ্জ	I-LOC
+)	O
+আসনে	O
+নির্বাচন	O
+থেকে	O
+সরে	O
+দাঁড়িয়েছেন	O
+আওয়ামী	B-ORG
+লীগের	I-ORG
+নেতৃত্বাধীন	O
+১৪-দলীয়	B-ORG
+জোটের	I-ORG
+শরিক	O
+জাসদের	B-ORG
+(	O
+ইনু	B-PER
+)	O
+প্রার্থী	O
+আবু	I-PER
+বকর	I-PER
+মো	B-PER
+.	I-PER
+ফিরোজ	I-PER
+।	O
+
+### Dataset-2 description:
+Dataset-2 contains data in `.jsonl` file format. This dataset is arranged in one file resides in <a href="https://github.com/banglakit/bengali-ner-data/blob/master/main.jsonl">master/main.jsonl</a>
+
+Annotation format in dataset-2:
+["মো. নাহিদ হুসাইন নামের এক পরীক্ষার্থী অভিযোগ করেন, ইডেন মহিলা কলেজের পাঠাগার ভবনের দ্বিতীয় তলায় তাঁর পরীক্ষার আসন ছিল।", ["B-PERSON", "I-PERSON", "L-PERSON", "O", "O", "O", "O", "O", "O", "B-ORG", "I-ORG", "L-ORG", "O", "O", "O", "O", "O", "O", "O", "O", "O"]]
+
