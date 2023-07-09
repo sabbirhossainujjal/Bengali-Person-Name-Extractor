@@ -20,43 +20,48 @@ Dataset-1: <a href= "https://github.com/Rifat1493/Bengali-NER/tree/master/annota
 
 ### Dataset-1 description: 
 Dataset -1 contains annotation data in `.txt` file format. From this dataset repository we take train_data.txt and test_data.txt file for our task. These files resides in <a href= "https://github.com/Rifat1493/Bengali-NER/blob/master/Input/train_data.txt"> master/inptut/train_data.txt </a> and <a href= "https://github.com/Rifat1493/Bengali-NER/blob/master/Input/test_data.txt">master/inptut/test_data.txt </a>.
+<br>Total sentences in train.txt= 4612
+<br>Total sentences in test.txt= 1950
 
-Annotation format in Dataset-1:
-লালপুর	B-LOC
-(	O
-নাটোর	B-LOC
-)	O
-প্রতিনিধি	O
-ব্রাহ্মণবাড়িয়া-২	B-LOC
-(	O
-সরাইল-আশুগঞ্জ	I-LOC
-)	O
-আসনে	O
-নির্বাচন	O
-থেকে	O
-সরে	O
-দাঁড়িয়েছেন	O
-আওয়ামী	B-ORG
-লীগের	I-ORG
-নেতৃত্বাধীন	O
-১৪-দলীয়	B-ORG
-জোটের	I-ORG
-শরিক	O
-জাসদের	B-ORG
-(	O
-ইনু	B-PER
-)	O
-প্রার্থী	O
-আবু	I-PER
-বকর	I-PER
-মো	B-PER
-.	I-PER
-ফিরোজ	I-PER
-।	O
+<br>Annotation format in Dataset-1:
+<br>লালপুর	B-LOC
+<br>(	O
+<br>নাটোর	B-LOC
+<br>)	O
+<br>প্রতিনিধি	O
+<br>ব্রাহ্মণবাড়িয়া-২	B-LOC
+<br>(	O
+<br>সরাইল-আশুগঞ্জ	I-LOC
+<br>)	O
+<br>আসনে	O
+<br>নির্বাচন	O
+<br>থেকে	O
+<br>সরে	O
+<br>দাঁড়িয়েছেন	O
+<br>আওয়ামী	B-ORG
+<br>লীগের	I-ORG
+<br>নেতৃত্বাধীন	O
+<br>১৪-দলীয়	B-ORG
+<br>জোটের	I-ORG
+<br>শরিক	O
+<br>জাসদের	B-ORG
+<br>(	O
+<br>ইনু	B-PER
+<br>)	O
+<br>প্রার্থী	O
+<br>আবু	I-PER
+<br>বকর	I-PER
+<br>মো	B-PER
+<br>.	I-PER
+<br>ফিরোজ	I-PER
+<br>।	O
 
 ### Dataset-2 description:
 Dataset-2 contains data in `.jsonl` file format. This dataset is arranged in one file resides in <a href="https://github.com/banglakit/bengali-ner-data/blob/master/main.jsonl">master/main.jsonl</a>
+`Total sentences in dataset-2 : 3545`
 
-Annotation format in dataset-2:
-["মো. নাহিদ হুসাইন নামের এক পরীক্ষার্থী অভিযোগ করেন, ইডেন মহিলা কলেজের পাঠাগার ভবনের দ্বিতীয় তলায় তাঁর পরীক্ষার আসন ছিল।", ["B-PERSON", "I-PERSON", "L-PERSON", "O", "O", "O", "O", "O", "O", "B-ORG", "I-ORG", "L-ORG", "O", "O", "O", "O", "O", "O", "O", "O", "O"]]
+<br>Annotation format in dataset-2:
+<br>["মো. নাহিদ হুসাইন নামের এক পরীক্ষার্থী অভিযোগ করেন, ইডেন মহিলা কলেজের পাঠাগার ভবনের দ্বিতীয় তলায় তাঁর পরীক্ষার আসন ছিল।", ["B-PERSON", "I-PERSON", "L-PERSON", "O", "O", "O", "O", "O", "O", "B-ORG", "I-ORG", "L-ORG", "O", "O", "O", "O", "O", "O", "O", "O", "O"]]
+
+
 
