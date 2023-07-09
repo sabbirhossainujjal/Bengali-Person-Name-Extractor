@@ -6,11 +6,11 @@ Example -
 <br>input: আব্দুর রহিম নামের কাস্টমারকে একশ টাকা বাকি দিলাম
 <br>output: আব্দুর রহিম
 <br>input: অর্থনীতি ও আর্থসামাজিক বেশির ভাগ সূচকে বাংলাদেশ ছাড়িয়ে গেছে দক্ষিণ এশিয়াকে ।
-<br>output: [] 
+<br>output: None
 
 
 ## Solution Approach
-As this is a name entity extraction task, it was handled as token classification task. First i preprocessed the given data, making appropiate for token classification modeling, then experimented with different huggingface models for the task. Then i train the models with these experimented results and build an inference script which will load the best saved models (saved in training processe) and do prediction using the model and then post process the model output for desire output format.
+As this is a name entity extraction task, it was handled as `token classification task`. First i preprocessed the given data, making appropiate datasets for token classification modeling, then experimented with different huggingface models for the task. Then i train the models with these experimented parameters and build an end-to-end inference script which will load the best saved models (saved in training processe) and do prediction using the model and then post-process the model output for desire output format.
 
 ## Datasets
 For this  task two dataset were used. These are open source datasets which can be downloaded from the following links.
@@ -81,7 +81,8 @@ From the previous description we have seen that the two dataset are in two diffe
 <br>`previous annotation`: ["B-PERSON", "I-PERSON", "L-PERSON", "O", "O", "O", "O", "O", "O", "B-ORG", "I-ORG", "L-ORG", "O", "O", "O", "O", "O", "O", "O", "O", "O"]
 <br>`new_annotation`: ["B-PER", "I-PER", "L-PER", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O"]]
 
-Coding for data-loading and pre-processing is implemented in `loading_dataset.py`. After running this script we will have a dataframe format data for particular dataset which can be used later for training purpose.
+>Functions for data-loading and pre-processing are implemented in `utils/loading_dataset.py`.
+>After running this script we will have a dataframe format data for particular dataset which can be used later for training purpose.
 
 #### Exploratory Data Analysis (EDA)
 After loading our data we did some data analysis. First we check all the all the data have proper annotation, especially we checked every token in the given text have corresponding annotaion. If there are missing annotation in the dataset, this data can't be used in training. 
@@ -124,4 +125,11 @@ For optimizer we used `AdamW` optimizer and for learning rate scheudler we tried
 
 ### Training
 We build custom `training loop` for training and validating our model performance. We trained each of the model and done `3 fold cross-validation`. Performance of these models are listed in the following table.
+
+### Post processing
+During inference, we needed to do some post processing to get our desired output. As our model predict class for each tokens, we have to extract the postions where name token were predicted and convert these tokens to text format. For this we first extract the spans where a person name may occur then convert these spans to corresponding token values and the decode the tokens using tokenizer.deocde method. 
+
+Example:
+<br>Given Text: আব্দুর রহিম নামের কাস্টমারকে একশ টাকা বাকি দিলাম
+<br>Extracted Names: ["আব্দুর রহিম"]
 
