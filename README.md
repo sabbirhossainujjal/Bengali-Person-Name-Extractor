@@ -131,7 +131,8 @@ For train-validation split, I have used `stratifiedkfold` from `sklearn`. Here I
 ### Modeling
 
 #### Models
-For models we have 2 choices, either to use multilingual language models or models that pretrained on bangla dataset. For our token classification task we choose to use bert-base model because it has a bengali pretrained version. 
+For modeling we choose DL based approach over feature based approach becasue of recent advancement of transformer based model performs much better than feature based models. <br>
+For DL based model we have 2 choices, either to use multilingual language models or models that pretrained on bangla dataset. For our token classification task we choose to use bert-base model because it has a bengali pretrained version. 
 
 For modeling we used bert-based huggingface models. We used 4 models in our experiments. 
 1. <a href= "https://huggingface.co/nafi-zaman/celloscope-28000-ner-banglabert-finetuned">ner-banglabert-finetuned
