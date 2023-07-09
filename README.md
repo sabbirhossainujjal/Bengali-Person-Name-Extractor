@@ -9,10 +9,10 @@ Example -
 <br>output: [] 
 
 
-## Solution Approach:
+## Solution Approach
 As this is a name entity extraction task, it was handled as token classification task. First i preprocessed the given data, making appropiate for token classification modeling, then experimented with different huggingface models for the task. Then i train the models with these experimented results and build an inference script which will load the best saved models (saved in training processe) and do prediction using the model and then post process the model output for desire output format.
 
-## Datasets:
+## Datasets
 For this  task two dataset were used. These are open source datasets which can be downloaded from the following links.
 
 Dataset-1: <a href= "https://github.com/Rifat1493/Bengali-NER/tree/master/annotated%20data"> [Rifat1493/Bengali-NER] </a>
@@ -57,7 +57,7 @@ Dataset -1 contains annotation data in `.txt` file format. From this dataset rep
 <br>ফিরোজ	I-PER
 <br>।	O
 
-### Dataset-2 description:
+### Dataset-2 description
 Dataset-2 contains data in `.jsonl` file format. This dataset is arranged in one file resides in <a href="https://github.com/banglakit/bengali-ner-data/blob/master/main.jsonl">master/main.jsonl</a>
 
 <br>`Total sentences in dataset-2 : 3545`
@@ -69,9 +69,9 @@ Dataset-2 contains data in `.jsonl` file format. This dataset is arranged in one
 
 ![1](Screenshots/dataset_distribution.png)
 
-### Dataset Preprocessing:
+### Dataset Preprocessing
 
-#### Dataset loading and annotation:
+#### Dataset loading and annotation
 From the previous description we have seen that the two dataset are in two different format and their annotation format is totally different. So we have to pre-processe these data to convert these annotation to a common format. Moreover, there are some redundant annotations in the datasets like "ORG", "LOC" etc. We dont need these annotations. 
 <br> First we converted all the input text in a common format. Our intented format is sentence level i.e all tokens of a sentence are combined in sentence not tokenized like in dataset-1. For that we converted dataset-1 to out intented format.
 
@@ -90,10 +90,38 @@ After loading our data we did some data analysis. First we check all the all the
 
 <br> Next we check the distribution of our datasets. We checked how many input entries contains name entity. From my investigation, i found that there was not many name annotation data in the datasets. There were a huge imbalance in the datasets. The distribution of these datasets are given bellow.
 
-![2]("Screenshots/dataset_distribution2.png")
+![2]("Screenshots/11.jpg")
 
 <br> From the distribution we found that there are not much data with person token so, we have combined both of these dataset to a single dataset for training. And to metigate data imbalance problem we `downsample` data without person token sothat it doesn't suffer overfitting problem.
 <br> After combining both of the data and downsampling majority class our dataset looks like the following ditribution.
 ![3](Screenshots/combined_data_distribution.png)
 
+#### Aligning labels to tokens
+
+In language model we convert text token to a particular number so that our model can process the data. As different model uses different tokenization scheme like word toekenizer, sub-word tokenizer etc. In sub-word tokenizer any token may broken into multiple tokens before converting into corresponding numerical value. For that there may be incoherence in tokens labels as our tokens are word level. So we implemented a fuction which will align our old lebels to new label that match the tokenized tokens.
+
+> All these preprocessing functions will be found in `utils/data_preprocessing.py` script.
+
+#### Train-validation split
+For train-validation split, I have used stratifiedkfold from sklearn. Here i used this split method so that our train valid dataset have properly distributed samples from both class (with person token and without person token)
+
+
+### Modeling
+
+#### Models
+For modeling we used bert-based huggingface models. We used 3 models in our experiments. 
+1. <a href= "https://huggingface.co/nafi-zaman/celloscope-28000-ner-banglabert-finetuned">banglabert finetuned for NER task
+2. <a href= "https://huggingface.co/csebuetnlp/banglabert">base banglabert
+3. <a href= "https://huggingface.co/nafi-zaman/mbert-finetuned-ner">mbert finetuned for NER task
+
+We build a custom model class which will load the desire model and add some final dense layers for entity classification task.
+
+#### Loss function and metrices
+For our task we use `CrossEntropyLoss` loss function for calculating our model loss. For monitoring our model performance we used F1_score as model metric.
+
+#### Optimizer and scheduler
+For optimizer we used `AdamW` optimizer and for learning rate scheudler we tried three types of scheduler -`[CosineAnnealingLR, CosineAnnealingWarmRestarts, linear]`
+
+### Training
+We build custom `training loop` for training and validating our model performance. We trained each of the model and done `3 fold cross-validation`. Performance of these models are listed in the following table.
 
