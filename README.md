@@ -79,7 +79,7 @@ From the previous description we have seen that the two dataset are in two diffe
 
 <br> Example:
 <br>`previous annotation`: ["B-PERSON", "I-PERSON", "L-PERSON", "O", "O", "O", "O", "O", "O", "B-ORG", "I-ORG", "L-ORG", "O", "O", "O", "O", "O", "O", "O", "O", "O"]
-<br>`new_annotation`: ["B-PER", "I-PER", "L-PER", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O"]]
+<br>`new_annotation`: ["B-PER", "I-PER", "I-PER", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O"]]
 
 >Functions for data-loading and pre-processing are implemented in `utils/loading_dataset.py`.
 >After running this script we will have a dataframe format data for particular dataset which can be used later for training purpose.
@@ -132,4 +132,89 @@ During inference, we needed to do some post processing to get our desired output
 Example:
 <br>Given Text: আব্দুর রহিম নামের কাস্টমারকে একশ টাকা বাকি দিলাম
 <br>Extracted Names: ["আব্দুর রহিম"]
+
+### Running Scripts for training and Inference
+#### Directory Introduction
+
+```
+Bengali_NER/
+├── Datasets/
+    └── dataset_1_train.txt
+    └── dataset_1_test.txt
+    └── dataset_2.jsonl
+├── utils/
+    └── configuration.py 
+    └── loading_dataset.py
+    └── data_preprocessing.py
+    └── training_utils.py
+    └── inference_utils.py
+├── training.py
+├── inference.py
+└── requirements.txt
+
+```
+
+> `configuration.py`: Contains all the important hyperameters and configuartion parameters like model_name, model_checkpoint etc. To train with different configuration chage values in this file or pass parameter in command line in proper format.<br>
+> `loading_dataset.py`: Contains helper functions for loading files and adjusting labels in proper format.<br>
+> `data_preprocessing.py`: Contains all the helper function for data pre-processing.<br>
+> `training_utils.py`: Contains all the helper function for training like CustomDataset class, NER_MODEL class etc.<br>
+> `inference_utils.py`: Contains all the helper function for prediction and post-processing.<br>
+
+> `training.py`: Combines all the helping functions for training and run training.<br>
+> `inference.py`: Combines all helper functions for inference and do end-to-end inference. <br>
+> `requirements.txt`: All required module list.
+
+
+ ### Setup
+
+For installing the necessary requirements, use the following bash snippet
+
+```
+$ git clone https://github.com/VirusProton/Bengali_NER.git
+$ cd Bengali_NER/
+$ pip -m venv <env_name>
+$ source bin/<env_name>/activate 
+$ pip install -r requirements.txt
+```
+
+### Run training
+To see list of all available options, do `python training.py -h`. There are two ways to provide input data files to the script:
+
+* with flag `--model_name <model_name>` where `<model_name>` refers to a valid name of a huggingface model.
+* by editing 'configuration.py' scripts parameters.
+
+
+#### Finetuning
+For finetuning a minimal example is as follows:
+
+```bash
+$ python ./training.py \
+    --debug True \
+    --model_name "csebuetnlp/banglabert" \
+    --output_dir "Models/" \
+    --n_folds 2 \
+    --num_epochs 3 \
+    --learning_rate= 2e-5 \
+    --gradient_accumulation_steps 1 \
+    --scheduler "linear"  \
+    --train_batch_size 8 \
+    --valid_batch_size=16 \
+    --max_length 512 \
+```
+
+
+### Inference 
+To see list of all available options, do `python inference.py -h`
+
+N.B: Please put best model weights in `Model/` directroy and edit `model_checkpoint` or pass model path (pass `absulate path`) in command line.<br>
+
+For run end-to-end inference use following bash command snippet:
+
+```bash
+$ python inference.py \
+    --text "আব্দুর রহিম নামের কাস্টমারকে একশ টাকা বাকি দিলাম"
+    --model_name "csebuetnlp/banglabert" \
+    --model_checkpoint "Models/best_model_0.bin"
+```
+
 
