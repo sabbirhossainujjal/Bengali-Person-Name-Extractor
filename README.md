@@ -3,7 +3,7 @@
 Building a person-name extractor for Bangla. It will take a sentence as input and output the person name present in the input sentence. The model should also be able to handle cases where no person’s name is present in the input sentence.
 
 Example -
-input: আব্দুর রহিম নামের কাস্টমারকে একশ টাকা বাকি দিলাম
+<br>input: আব্দুর রহিম নামের কাস্টমারকে একশ টাকা বাকি দিলাম
 <br>output: আব্দুর রহিম
 <br>input: অর্থনীতি ও আর্থসামাজিক বেশির ভাগ সূচকে বাংলাদেশ ছাড়িয়ে গেছে দক্ষিণ এশিয়াকে ।
 <br>output: [] 
@@ -15,5 +15,5 @@ As this is a name entity extraction task, it was handled as token classification
 ## Datasets:
 For this  task two dataset were used. These are open source datasets which can be downloaded from the following links.
 
-<a herf= "https://github.com/Rifat1493/Bengali-NER/tree/master/annotated%20data"> Dataset-1[Bengali-NER/annotated data at master · Rifat1493/Bengali-NER]
+<a href= "https://github.com/Rifat1493/Bengali-NER/tree/master/annotated%20data"> Dataset-1[Bengali-NER/annotated data at master · Rifat1493/Bengali-NER]
 
