@@ -11,6 +11,7 @@
   - [Post processing](#postprocessing)
   - [Setup](#setup)
   - [Run Training](#run--training)
+  - [Inference](#inference)
 
 ### Problem Statement
 Building a person-name extractor for Bangla. It will take a sentence as input and output the person name present in the input sentence. The model should also be able to handle cases where no person’s name is present in the input sentence.
@@ -150,7 +151,7 @@ For optimizer we used `AdamW` optimizer and for learning rate scheudler we tried
 #### Training
 We build custom `training loop` for training and validating our model performance. I have build custom training loop rather than using a trainer becasue it give more freedom to modify and experimenting with different parameter. We trained each of the model and done `3 fold cross-validation`. Performance of these models are listed in the following table. Cross-validation method was used as it gives us insights about models robustness and ensures more general model performance and no overfitting is occuring. 
 
-#### Post-processing
+### Post-processing
 During inference, we needed to do some post processing to get our desired output. As our model predict class for each tokens, we have to extract the postions where name token were predicted and convert these tokens to text format. For this we first extract the spans where a person name may occur then convert these spans to corresponding token values and the decode the tokens using tokenizer.deocde method. <br>
 
 Example:<br>
@@ -206,7 +207,7 @@ $ pip install -r requirements.txt
 $ pip install git+https://github.com/csebuetnlp/normalizer
 ```
 
- ### Run training
+ ### Training
 To see list of all available options, do `python training.py -h`. There are two ways to provide input data files to the script:
 
 * with flag `--model_name <model_name>` where `<model_name>` refers to a valid name of a huggingface model.
