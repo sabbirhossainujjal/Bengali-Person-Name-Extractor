@@ -3,14 +3,14 @@
 ## Table of Contents
 - [Bengali_NER](#bengali_ner)
   - [Table of Contents](#table-of-contents)
-  - [Problem Statement](#problem_statement)
-  - [Solution Approach](#solution_approach)
+  - [Problem Statement](#problem-statement)
+  - [Solution Approach](#solution-approach)
   - [Datasets](#datasets)
   - [Preprocessing](#preprocessing)
   - [Modeling](#modeling)
-  - [Post processing](#postprocessing)
+  - [Post processing](#post-processing)
   - [Setup](#setup)
-  - [Run Training](#run--training)
+  - [Run Training](#run-training)
   - [Inference](#inference)
 
 ### Problem Statement
@@ -148,7 +148,7 @@ For our task we use `CrossEntropyLoss` loss function for calculating our model l
 #### Optimizer and scheduler
 For optimizer we used `AdamW` optimizer and for learning rate scheudler we tried three types of scheduler -`[CosineAnnealingLR, CosineAnnealingWarmRestarts, linear]`
 
-#### Training
+#### Training process
 We build custom `training loop` for training and validating our model performance. I have build custom training loop rather than using a trainer becasue it give more freedom to modify and experimenting with different parameter. We trained each of the model and done `3 fold cross-validation`. Performance of these models are listed in the following table. Cross-validation method was used as it gives us insights about models robustness and ensures more general model performance and no overfitting is occuring. 
 
 ### Post-processing
@@ -207,7 +207,7 @@ $ pip install -r requirements.txt
 $ pip install git+https://github.com/csebuetnlp/normalizer
 ```
 
- ### Training
+ ### Run Training
 To see list of all available options, do `python training.py -h`. There are two ways to provide input data files to the script:
 
 * with flag `--model_name <model_name>` where `<model_name>` refers to a valid name of a huggingface model.
