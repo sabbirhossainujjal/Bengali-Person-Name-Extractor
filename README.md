@@ -59,14 +59,13 @@ Dataset -1 contains annotation data in `.txt` file format. From this dataset rep
 
 ### Dataset-2 description:
 Dataset-2 contains data in `.jsonl` file format. This dataset is arranged in one file resides in <a href="https://github.com/banglakit/bengali-ner-data/blob/master/main.jsonl">master/main.jsonl</a>
-
 <br>`Total sentences in dataset-2 : 3545`
-
 <br>Annotation format in dataset-2:
 <br>["মো. নাহিদ হুসাইন নামের এক পরীক্ষার্থী অভিযোগ করেন, ইডেন মহিলা কলেজের পাঠাগার ভবনের দ্বিতীয় তলায় তাঁর পরীক্ষার আসন ছিল।", ["B-PERSON", "I-PERSON", "L-PERSON", "O", "O", "O", "O", "O", "O", "B-ORG", "I-ORG", "L-ORG", "O", "O", "O", "O", "O", "O", "O", "O", "O"]]
 
 
-Dataset disribution:
+#### Dataset disribution:
+
 ![](Screenshots/dataset_distribution.png)
 
 ### Dataset Preprocessing:
