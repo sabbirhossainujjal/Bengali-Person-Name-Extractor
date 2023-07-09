@@ -90,7 +90,7 @@ After loading our data we did some data analysis. First we check all the all the
 
 <br> Next we check the distribution of our datasets. We checked how many input entries contains name entity. From my investigation, i found that there was not many name annotation data in the datasets. There were a huge imbalance in the datasets. The distribution of these datasets are given bellow.
 
-![2]("Screenshots/data_distribution2.png")
+![2]("Screenshots/dataset_distribution2.png")
 
 <br> From the distribution we found that there are not much data with person token so, we have combined both of these dataset to a single dataset for training. And to metigate data imbalance problem we `downsample` data without person token sothat it doesn't suffer overfitting problem.
 <br> After combining both of the data and downsampling majority class our dataset looks like the following ditribution.
