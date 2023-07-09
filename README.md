@@ -15,5 +15,8 @@ As this is a name entity extraction task, it was handled as token classification
 ## Datasets:
 For this  task two dataset were used. These are open source datasets which can be downloaded from the following links.
 
-<a href= "https://github.com/Rifat1493/Bengali-NER/tree/master/annotated%20data"> Dataset-1[Bengali-NER/annotated data at master · Rifat1493/Bengali-NER]
+Dataset-1: <a href= "https://github.com/Rifat1493/Bengali-NER/tree/master/annotated%20data"> [Rifat1493/Bengali-NER]
+<br> Dataset-2: <a href= "https://raw.githubusercontent.com/banglakit/bengali-ner-data/master/main.jsonl"> [banglakit/bengali-ner-data]
 
+Dataset-1 description: 
+Dataset -1 contains annotation data in `.txt` file format. From this dataset repository we take train_data.txt and test_data.txt file for our task. These files resides in <a href= "https://github.com/Rifat1493/Bengali-NER/blob/master/Input/train_data.txt">master/inptut/train_data.txt  and master/inptut/test_data.txt
