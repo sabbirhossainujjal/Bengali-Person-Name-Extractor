@@ -1,4 +1,17 @@
 # Bengali_NER
+
+## Table of Contents
+- [Bengali_NER](#bengali_ner)
+  - [Table of Contents](#table-of-contents)
+  - [Problem Statement](#problem_statement)
+  - [Solution Approach](#solution_approach)
+  - [Datasets](#datasets)
+  - [Preprocessing](#preprocessing)
+  - [Modeling](#modeling)
+  - [Post processing](#postprocessing)
+  - [Setup](#setup)
+  - [Run Training](#run--training)
+
 ## Problem Statement
 Building a person-name extractor for Bangla. It will take a sentence as input and output the person name present in the input sentence. The model should also be able to handle cases where no person’s name is present in the input sentence.
 
@@ -10,7 +23,7 @@ Example -
 
 
 ## Solution Approach
-As this is a name entity extraction task, it was handled as `token classification task`. First I preprocessed the given data, making appropiate datasets for token classification modeling, then experimented with different huggingface models for the task. Then I train the models with these experimented parameters and build an end-to-end inference script.The inference script will load the best saved models (saved in training processe) and do prediction using the model and then post-process the model output for desire output format for given input.
+As this is a name entity extraction task, it was handled as `token classification task`. In token classification process we can predict which token belongs to name entity class and extract names from the given text. For the task, first I preprocessed the given data, making appropiate datasets for token classification modeling, then experimented with different huggingface models for the task. Then I train the models with these experimented parameters and build an end-to-end inference script.The inference script will load the best saved models (saved in training processe) and do prediction using the model and then post-process the model output for desire output format for given input.
 
 ### Datasets
 For this  task two dataset were used. These are open source datasets which can be downloaded from the following links.
@@ -70,21 +83,25 @@ Annotation format in dataset-2: <br>
 
 ![1](Screenshots/dataset_distribution.png)
 
-### Dataset Preprocessing
+### Preprocessing
 
 #### Dataset loading and adjusting annotation
-From the previous description we have seen that the two dataset are in two different format and their annotation format is totally different. So we have to pre-processe these data to convert these annotation to a common format. Moreover, there are some redundant annotations in the datasets like "ORG", "LOC" etc. We dont need these annotations. <br>
+From the previous description we have seen that the two dataset are in two different format and their annotation format is totally different. So, we need to convert these data to a common format. So we have to pre-processe these data to convert these annotation to a common format. Moreover, there are some redundant annotations in the datasets like "ORG", "LOC" etc. We dont need these annotations. <br>
 
-First we converted all the input text in a common format. Our intented format is sentence level i.e all tokens of a sentence are combined in sentence not tokenized like in dataset-1. For that we converted dataset-1 to out intented format. <br>
+First we converted all the input text in a common format as language model expect a common input format. Our intented format is sentence level i.e all tokens of a sentence are combined in sentence not tokenized like in dataset-1. For that we converted dataset-1 to out intented format. <br>
 
-For our person name extraction task we only need `B-PER`(Begining of the name), `I-PER`(Inside of the name), `O`(others). So we converted all the annotations in both dataset to our desired format. <br>
+For our person name extraction task we only need `B-PER`(Begining of the name), `I-PER`(Inside of the name), `O`(others).But as we alrady seen in the given dataset are annoted differently and contains reduntant annotations which we dont need for our task like "ORG", "LOC" etc.So we change annotations from "B-PERSON" to "B-PER", "I-PERSON" to "I-PER" and unnecessary annotations to "O". We converted all the annotations in both dataset to our desired format. <br>
 
 Example:<br>
 `previous annotation`: ["B-PERSON", "I-PERSON", "L-PERSON", "O", "O", "O", "O", "O", "O", "B-ORG", "I-ORG", "L-ORG", "O", "O", "O", "O", "O", "O", "O", "O", "O"] <br>
-`new_annotation`: ["B-PER", "I-PER", "I-PER", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O"]] <br>
+`new_annotation`: ["B-PER", "I-PER", "I-PER", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O"] <br>
 
 >Functions for data-loading and pre-processing are implemented in `utils/loading_dataset.py`.
 >After running this script we will have a dataframe format data for particular dataset which can be used later for training purpose.
+
+#### Normalizing data
+Before feeding bangla text input to NLP models input text must be normalized. As there some challenges in unicode system for bengali like different varients of the same character exists in Bengali unicode system. By normalizing we convert all these varients to a single unicode representation. So, doing normalization before training is a must.
+
 
 #### Exploratory Data Analysis (EDA)
 After loading our data we did some data analysis. First we check all the all the data have proper annotation, especially we checked every token in the given text have corresponding annotaion. If there are missing annotation in the dataset, this data can't be used in training. 
@@ -107,29 +124,33 @@ In language model we convert text token to a particular number so that our model
 > All these preprocessing functions will be found in `utils/data_preprocessing.py` script.
 
 #### Train-validation split
-For train-validation split, I have used `stratifiedkfold` from `sklearn`. Here I used this split method so that our train valid dataset have properly distributed samples from both class (with person token and without person token)
+For train-validation split, I have used `stratifiedkfold` from `sklearn`. Here I used this split method so that our train valid dataset have properly distributed samples from both class (with person token and without person token).We have done most of the experimented with 3 fold cross-validation to ensure models robustness.
 
 
 ### Modeling
 
 #### Models
-For modeling we used bert-based huggingface models. We used 3 models in our experiments. 
+For models we have 2 choices, either to use multilingual language models or models that pretrained on bangla dataset. For our token classification task we choose to use bert-base model because it has a bengali pretrained version. 
+
+For modeling we used bert-based huggingface models. We used 4 models in our experiments. 
 1. <a href= "https://huggingface.co/nafi-zaman/celloscope-28000-ner-banglabert-finetuned">ner-banglabert-finetuned
 2. <a href= "https://huggingface.co/csebuetnlp/banglabert">csebuetnlp/banglabert
-3. <a href= "https://huggingface.co/nafi-zaman/mbert-finetuned-ner">mbert-finetuned-ner
+3. <a href= "https://huggingface.co/csebuetnlp/banglabert_large"> csebuetnlp/banglabert_large
+4. <a href= "https://huggingface.co/nafi-zaman/mbert-finetuned-ner">mbert-finetuned-ner
 
-We build a custom model class which will load the desire model and add some final dense layers for entity classification task.
+> We used both banglabert base and banglabert finetuned for ner task
+> We build a custom model class which will load the desire model and add some final dense layers for entity classification task.
 
 #### Loss function and metrices
-For our task we use `CrossEntropyLoss` loss function for calculating our model loss. For monitoring our model performance we used F1_score as model metric.
+For our task we use `CrossEntropyLoss` loss function for calculating our model loss. For monitoring our model performance we used `F1_score` as model metric. F1_Score was choosen as model monitoring metrics because it gives more general idea of the model even if dataset is imbalanced.
 
 #### Optimizer and scheduler
 For optimizer we used `AdamW` optimizer and for learning rate scheudler we tried three types of scheduler -`[CosineAnnealingLR, CosineAnnealingWarmRestarts, linear]`
 
 ### Training
-We build custom `training loop` for training and validating our model performance. We trained each of the model and done `3 fold cross-validation`. Performance of these models are listed in the following table.
+We build custom `training loop` for training and validating our model performance. I have build custom training loop rather than using a trainer becasue it give more freedom to modify and experimenting with different parameter. We trained each of the model and done `3 fold cross-validation`. Performance of these models are listed in the following table. Cross-validation method was used as it gives us insights about models robustness and ensures more general model performance and no overfitting is occuring. 
 
-### Post processing
+### Post-processing
 During inference, we needed to do some post processing to get our desired output. As our model predict class for each tokens, we have to extract the postions where name token were predicted and convert these tokens to text format. For this we first extract the spans where a person name may occur then convert these spans to corresponding token values and the decode the tokens using tokenizer.deocde method. <br>
 
 Example:<br>
@@ -137,6 +158,7 @@ Given Text: আব্দুর রহিম নামের কাস্টম�
 Extracted Names: ["আব্দুর রহিম"] <br>
 
 ### Running Scripts for training and Inference
+
 #### Directory Introduction
 
 ```
@@ -179,7 +201,10 @@ $ pip -m venv <env_name>
 $ source bin/<env_name>/activate 
 $ pip install -r requirements.txt
 ```
-
+##### Normalizer
+``` 
+$ pip install git+https://github.com/csebuetnlp/normalizer
+```
 ### Run training
 To see list of all available options, do `python training.py -h`. There are two ways to provide input data files to the script:
 
@@ -195,6 +220,7 @@ $ python ./training.py \
     --debug True \
     --model_name "csebuetnlp/banglabert" \
     --output_dir "Models/" \
+    --do_normalize True \
     --n_folds 2 \
     --num_epochs 3 \
     --learning_rate= 2e-5 \
@@ -202,11 +228,13 @@ $ python ./training.py \
     --scheduler "linear"  \
     --train_batch_size 8 \
     --valid_batch_size=16 \
-    --max_length 512 \
+    --max_length 256 \
 ```
 
 
 ### Inference 
+This inference script runs as an end-to-end inference style that means it will take a text string or list of texts and extract names from these given inputs.<br>
+
 To see list of all available options, do `python inference.py -h`
 
 N.B: Please put best model weights in `Model/` directroy and edit `model_checkpoint` or pass model path (pass `absulate path`) in command line.<br>
