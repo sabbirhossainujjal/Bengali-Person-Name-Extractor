@@ -4,9 +4,9 @@ Building a person-name extractor for Bangla. It will take a sentence as input an
 
 Example -
 input: আব্দুর রহিম নামের কাস্টমারকে একশ টাকা বাকি দিলাম
-output: আব্দুর রহিম
-input: অর্থনীতি ও আর্থসামাজিক বেশির ভাগ সূচকে বাংলাদেশ ছাড়িয়ে গেছে দক্ষিণ এশিয়াকে ।
-output: 
+<br>output: আব্দুর রহিম
+<br>input: অর্থনীতি ও আর্থসামাজিক বেশির ভাগ সূচকে বাংলাদেশ ছাড়িয়ে গেছে দক্ষিণ এশিয়াকে ।
+<br>output: [] 
 
 
 ## Solution Approach:
@@ -15,4 +15,5 @@ As this is a name entity extraction task, it was handled as token classification
 ## Datasets:
 For this  task two dataset were used. These are open source datasets which can be downloaded from the following links.
 
-Dataset-1: <a herf= "Bengali-NER/annotated data at master · Rifat1493/Bengali-NER">
+<a herf= "Bengali-NER/annotated data at master · Rifat1493/Bengali-NER"> Dataset-1
+
