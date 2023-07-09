@@ -101,13 +101,12 @@ Example:<br>
 >After running this script we will have a dataframe format data for particular dataset which can be used later for training purpose.
 
 #### Normalizing data
-Before feeding bangla text input to NLP models input text must be normalized. As there some challenges in unicode system for bengali like different varients of the same character exists in Bengali unicode system. By normalizing we convert all these varients to a single unicode representation. So, doing normalization before training is a must.
-
+Before feeding bangla text input to NLP models input text must be normalized. As there some challenges in unicode system for bengali like different varients of the same character exists in Bengali unicode system. By normalizing we convert all these varients to a single unicode representation.By analysing we found that there are some mis-match in token labels if we dont normalize input sentence.There were `1019` miss-match data in dataset-1 and `172` mis-match data in dataset-2 . So we discarded these erroneous data from our datasets. So, doing normalization before training is a must for our task. 
 
 #### Exploratory Data Analysis (EDA)
-After loading our data we did some data analysis. First we check all the all the data have proper annotation, especially we checked every token in the given text have corresponding annotaion. If there are missing annotation in the dataset, this data can't be used in training. 
-<br> After analysing we found `1019` miss-match data in dataset-1 and `172` mis-match data in dataset-2. So we discarded these erroneous data from our datasets. 
-<br> Then we checked if there is any common entries in train test datasets. For our test dataset we used dataset-1 testing data. After checking we found `67` common entries in train, test dataset. So we removed these common data from test dataset, because these common data may introduce data-leakage problem in our experiment.
+After loading our data we did some data analysis. First we check all the all the data have proper annotation, especially we checked every token in the given text have corresponding annotaion. If there are missing annotation in the dataset, this data can't be used in training. So after analysing we discarded those entries which have erroneous labels.
+
+<br> We checked if there is any common entries in train test datasets. For our test dataset we used dataset-1 testing data. After checking we found `67` common entries in train, test dataset. So we removed these common data from test dataset, because these common data may introduce data-leakage problem in our experiment.
 
 <br> Next we check the distribution of our datasets. We checked how many input entries contains name entity. From my investigation, I found that there was not many name annotation data in the datasets. There were a huge imbalance in the datasets. The distribution of these datasets are given bellow.
 
