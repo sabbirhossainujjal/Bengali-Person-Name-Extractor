@@ -87,11 +87,11 @@ Annotation format in dataset-2: <br>
 ### Preprocessing
 
 #### Dataset loading and adjusting annotation
-From the previous description we have seen that the two dataset are in two different format and their annotation format is totally different. So, we need to convert these data to a common format. So we have to pre-processe these data to convert these annotation to a common format. Moreover, there are some redundant annotations in the datasets like "ORG", "LOC" etc. We dont need these annotations. <br>
+From the previous description we have seen that the two dataset are in two different format and their annotation format is totally different. So, we need to convert these data to a common format. So we have to pre-processe these data to convert these annotation to a common format. Moreover, there are some redundant annotations in the datasets like "ORG", "LOC" etc. We don't need these annotations. <br>
 
 First we converted all the input text in a common format as language model expect a common input format. Our intented format is sentence level i.e all tokens of a sentence are combined in sentence not tokenized like in dataset-1. For that we converted dataset-1 to out intented format. <br>
 
-For our person name extraction task we only need `B-PER`(Begining of the name), `I-PER`(Inside of the name), `O`(others).But as we alrady seen in the given dataset are annoted differently and contains reduntant annotations which we dont need for our task like "ORG", "LOC" etc.So we change annotations from "B-PERSON" to "B-PER", "I-PERSON" to "I-PER" and unnecessary annotations to "O". We converted all the annotations in both dataset to our desired format. <br>
+For our person name extraction task we only need `B-PER`(Begining of the name), `I-PER`(Inside of the name), `O`(others). As we alrady seen that the datasets are annoted differently and contains reduntant annotations which we don't need for our task like "ORG", "LOC" etc.So we converted annotations from "B-PERSON" to "B-PER", "I-PERSON" to "I-PER" and unnecessary annotations to "O". We transformed all the annotations in both dataset to our desired format. <br>
 
 Example:<br>
 `previous annotation`: ["B-PERSON", "I-PERSON", "L-PERSON", "O", "O", "O", "O", "O", "O", "B-ORG", "I-ORG", "L-ORG", "O", "O", "O", "O", "O", "O", "O", "O", "O"] <br>
@@ -101,7 +101,7 @@ Example:<br>
 >After running this script we will have a dataframe format data for particular dataset which can be used later for training purpose.
 
 #### Normalizing data
-Before feeding bangla text input to NLP models input text must be normalized. As there some challenges in unicode system for bengali like different varients of the same character exists in Bengali unicode system. By normalizing we convert all these varients to a single unicode representation.By analysing we found that there are some mis-match in token labels if we dont normalize input sentence.There were `1019` miss-match data in dataset-1 and `172` mis-match data in dataset-2 . So we discarded these erroneous data from our datasets. So, doing normalization before training is a must for our task. 
+Before feeding bangla text input to NLP models input text must be normalized. As there some challenges in unicode system for bengali like different varients of the same character exists in Bengali unicode system. By normalizing we convert all these varients to a single unicode representation.By analysing we found that there are some mis-match in token labels if we dont normalize input sentence.There were `1019` miss-match data in dataset-1 and `172` mis-match data in dataset-2 because of un-normalized text. So, doing normalization before training is a must for our task. 
 
 #### Exploratory Data Analysis (EDA)
 After loading our data we did some data analysis. First we check all the all the data have proper annotation, especially we checked every token in the given text have corresponding annotaion. If there are missing annotation in the dataset, this data can't be used in training. So after analysing we discarded those entries which have erroneous labels.
@@ -131,7 +131,7 @@ For train-validation split, I have used `stratifiedkfold` from `sklearn`. Here I
 
 #### Models
 For modeling we choose DL based approach over feature based approach becasue of recent advancement of transformer based model performs much better than feature based models. <br>
-For DL based model we have 2 choices, either to use multilingual language models or models that pretrained on bangla dataset. For our token classification task we choose to use bert-base model because it has a bengali pretrained version. 
+For DL based model we have 2 choices, either to use multilingual language-models or models that were pretrained on bengali dataset. For our token classification task we choose to use bert-base model because it has a bengali pretrained version and suitable for token classification task. 
 
 For modeling we used bert-based huggingface models. We used 4 models in our experiments. 
 1. <a href= "https://huggingface.co/nafi-zaman/celloscope-28000-ner-banglabert-finetuned">ner-banglabert-finetuned
@@ -139,7 +139,7 @@ For modeling we used bert-based huggingface models. We used 4 models in our expe
 3. <a href= "https://huggingface.co/csebuetnlp/banglabert_large"> csebuetnlp/banglabert_large
 4. <a href= "https://huggingface.co/nafi-zaman/mbert-finetuned-ner">mbert-finetuned-ner
 
-> We used both banglabert base and banglabert finetuned for ner task
+
 > We build a custom model class which will load the desire model and add some final dense layers for entity classification task.
 
 #### Loss function and metrices
@@ -180,15 +180,14 @@ Bengali_NER/
 
 ```
 
-> `configuration.py`: Contains all the important hyperameters and configuartion parameters like model_name, model_checkpoint etc. To train with different configuration chage values in this file or pass parameter in command line in proper format.<br>
-> `loading_dataset.py`: Contains helper functions for loading files and adjusting labels in proper format.<br>
-> `data_preprocessing.py`: Contains all the helper function for data pre-processing.<br>
-> `training_utils.py`: Contains all the helper function for training like CustomDataset class, NER_MODEL class etc.<br>
-> `inference_utils.py`: Contains all the helper function for prediction and post-processing.<br>
-
-> `training.py`: Combines all the helping functions for training and run training.<br>
-> `inference.py`: Combines all helper functions for inference and do end-to-end inference. <br>
-> `requirements.txt`: All required module list.
+* `configuration.py`: Contains all the important hyperameters and configuartion parameters like model_name, model_checkpoint etc. To train with different configuration chage values in this file or pass parameter in command line in proper format.<br>
+* `loading_dataset.py`: Contains helper functions for loading files and adjusting labels in proper format.<br>
+* `data_preprocessing.py`: Contains all the helper function for data pre-processing.<br>
+* `training_utils.py`: Contains all the helper function for training like CustomDataset class, NER_MODEL class etc.<br>
+* `inference_utils.py`: Contains all the helper function for prediction and post-processing.<br>
+* `training.py`: Combines all the helping functions for training and run training.<br>
+* `inference.py`: Combines all helper functions for inference and do end-to-end inference. <br>
+* `requirements.txt`: All required module list.
 
 
  ### Setup
@@ -222,7 +221,6 @@ $ python ./training.py \
     --debug True \
     --model_name "csebuetnlp/banglabert" \
     --output_dir "Models/" \
-    --do_normalize True \
     --n_folds 2 \
     --num_epochs 3 \
     --learning_rate= 2e-5 \
