@@ -15,5 +15,5 @@ As this is a name entity extraction task, it was handled as token classification
 ## Datasets:
 For this  task two dataset were used. These are open source datasets which can be downloaded from the following links.
 
-<a herf= "Bengali-NER/annotated data at master · Rifat1493/Bengali-NER"> Dataset-1
+<a herf= "https://github.com/Rifat1493/Bengali-NER/tree/master/annotated%20data"> Dataset-1[Bengali-NER/annotated data at master · Rifat1493/Bengali-NER]
 
