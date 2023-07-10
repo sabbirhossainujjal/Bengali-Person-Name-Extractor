@@ -1,7 +1,7 @@
 # Bengali-Person-Name-Extractor
 
 ## Table of Contents
-- [Bengali Persion Name Extractor](#bengali-person-name-extractor)
+- [Bengali Person Name Extractor](#bengali-person-name-extractor)
   - [Table of Contents](#table-of-contents)
   - [Problem Statement](#problem-statement)
   - [Solution Approach](#solution-approach)
@@ -32,7 +32,7 @@ As this is a name entity extraction task, it was handled as `token classificatio
 ### Datasets
 For this  task two dataset were used. These are open source datasets which can be downloaded from the following links.
 
-Dataset-1: <a href= "https://github.com/Rifat1493/Bengali-NER/tree/master/annotated%20data"> [Rifat1493/Bengali-NER] </a>
+Dataset-1: <a href= "https://github.com/Rifat1493/Bengali-NER/tree/master/Input"> [Rifat1493/Bengali-NER] </a>
 <br> Dataset-2: <a href= "https://raw.githubusercontent.com/banglakit/bengali-ner-data/master/main.jsonl"> [banglakit/bengali-ner-data] </a>
 
 #### Dataset-1 description: 
@@ -187,18 +187,24 @@ Extracted Names: ["আব্দুর রহিম"] <br>
 ### Results
 
 
-| **Model**                                                  | **F1 Score** |
+| **Model**                                                                   | **F1 Score** |
 |:----------------------------------------------------------:|:--------------------------------
-| bangla-bert-finetuned-ner                                  | 0.73          |
-| bangla-bert-base                                           | 0.77          |
-| bangla-bert-large                                          | 0.76          |
-| mbert                                                      | 0.78          |
-| bangla-bert-finetuned-ner  without normalization           | 0.78          |
-| bangla-bert-finetuned-ner + downsampled                    | 0.79          |
-| bangla-bert-finetuned-ner + upsampled                      | 0.78          |
-| bangla-bert-finetuned-ner + downsampled + upsampled        | 0.78          |
-| bangla-bert-large + downsampled + upsampled                | 0.74          |
+| mbert                                                                       | 0.753          |
+| bangla-bert-base                                                            | 0.732          |
+| bangla-bert-ner-finetuned (only dataset-1)                                  | 0.702         |
+| bangla-bert-ner-finetuned (only dataset-2)                                  | 0.695         |
+| bangla-bert-ner-finetuned (combined data)                                   | 0.768          |
+| bangla-bert-ner-finetuned + downsampled                                     | 0.711          |
+| **bangla-bert-ner-finetuned + combined + upsampled**                        | **0.811**      |
+| bangla-bert-ner-finetuned + downsampled + upsampled                         | 0.801          |
+| bangla-bert-large                                                           | 0.752          |
+| bangla-bert-large + downsampled                                             | 0.788          |
+| bangla-bert-large + downsampled + upsampled                                 | 0.74           |
 
+N.B: All the experimented done with combined data if not specified.
+
+#### Result analysis: 
+From the above table we can see different models performance. From the experiment we find best result for bangla-bert-ner-finetuned with upsampled dataset training. So, with larger dataset we can also get better results. We can also see that for larger model, without dataset balancing gives lower performance compare to balanced dataset [upsampled, downsampled] because they tends to suffer overfitting problem easily than lighter models.
 
 ### Running Scripts for training and Inference
 
@@ -238,7 +244,7 @@ Bengali_NER/
 
 For installing the necessary requirements, use the following bash snippet
 
-```
+```bash
 $ git clone https://github.com/VirusProton/Bengali_NER.git
 $ cd Bengali-Person-Name-Extractor/
 $ pip -m venv <env_name>
@@ -246,7 +252,7 @@ $ source bin/<env_name>/activate
 $ pip install -r requirements.txt
 ```
 ##### Normalizer
-``` 
+``` bash
 $ pip install git+https://github.com/csebuetnlp/normalizer
 ```
 
@@ -265,6 +271,7 @@ $ python training.py \
     --debug True \
     --model_name "csebuetnlp/banglabert" \
     --output_dir "Models/" \
+    --dataset_no 3 \
     --do_normalize True \
     --n_folds 2 \
     --num_epochs 3 \
@@ -277,8 +284,10 @@ $ python training.py \
 ```
 
 ### Testing
-This script run testing on test dataset and returns model prformance (f1_score).
-N.B: This script is build for data format as dataset-1. 
+This script run testing on test dataset and returns model prformance (f1_score).<br>
+
+To see list of all available options, do `python testing.py -h`
+N.B: This script is build for data format as dataset-1. Please data in proper format.  
 
 ```bash
 $ python testing.py \
