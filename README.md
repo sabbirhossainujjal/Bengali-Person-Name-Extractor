@@ -84,7 +84,10 @@ Annotation format in dataset-2: <br>
 
 #### Dataset disribution:
 
-![1](Screenshots/dataset_distribution.png)
+<p align="center">
+   <img src="./Screenshots/dataset_distribution.png" width="450" height="450"/>
+</p>
+
 
 ### Preprocessing
 
@@ -103,23 +106,31 @@ Example:<br>
 >After running this script we will have a dataframe format data for particular dataset which can be used later for training purpose.
 
 #### Normalizing data
-Before feeding bangla text input to NLP models input text must be normalized. As there some challenges in unicode system for bengali like different varients of the same character exists in Bengali unicode system. By normalizing we convert all these varients to a single unicode representation.By analysing we found that there are some mis-match in token labels if we dont normalize input sentence.There were `1019` miss-match data in dataset-1 and `172` mis-match data in dataset-2 because of un-normalized text. So, doing normalization before training is a must for our task. 
+Before feeding bangla text input to NLP models input text must be normalized. As there some challenges in unicode system for bengali like different varients of the same character exists in Bengali unicode system. By normalizing we convert all these varients to a single unicode representation. By analysing we found that there are some mismatch in token labels if we don't normalize input sentence. There were `1019` mismatch data in dataset-1 and `172` mismatch data in dataset-2 because of unnormalized text. So, doing normalization before training is a must for our task. 
 
 #### Exploratory Data Analysis (EDA)
-After loading our data we did some data analysis. First we check all the all the data have proper annotation, especially we checked every token in the given text have corresponding annotaion. If there are missing annotation in the dataset, this data can't be used in training. So after analysing we discarded those entries which have erroneous labels.
+After loading our data, we did some data analysis. First, we check if all the data have proper annotation, especially checked every token in the given text have corresponding annotaion. If there are missing annotation in any data, this data can't be used in training. Thus we discarded those entries with erroneous labels.
 
-<br> We checked if there is any common entries in train test datasets. For our test dataset we used dataset-1 testing data. After checking we found `67` common entries in train, test dataset. So we removed these common data from test dataset, because these common data may introduce data-leakage problem in our experiment.
+<br> We checked if there is any common entries in train and test datasets. For our test dataset we used dataset-1 testing data. After checking we found `67` common entries in train, test dataset. So we removed these common data from test dataset, because these common data may introduce data-leakage problem in our experiment.
 
-<br> Next we check the distribution of our datasets. We checked how many input entries contains name entity. From my investigation, I found that there was not many name annotation data in the datasets. There were a huge imbalance in the datasets. The distribution of these datasets are given bellow.
+<br> Next we check the distribution of our datasets. We checked how many input entries contains name entity. From our investigation, we found that dataset is highly imbalanced and there were small ammount of data with name entity in our datasets. The distribution of these datasets are given bellow.
 
-![2](Screenshots/dataset_distribution2.png)
+<p align="center">
+   <img src="./Screenshots/dataset_distribution2.png" width="450" height="450"/>
+</p>
+
 
 #### Downsampling and Upsampling
-In classification task, if data is very imbalanced, model could suffer `overfitting problem`. From the distribution we found that there are not much data with person token First we try  we have combined both of these dataset to a single dataset for training. After that to tackle `overfitting` we tried downsampling on majority class and upsampling on minority class.
+In classification task, if training data is very imbalanced, model will suffer from `overfitting problem`. From the distribution we found that the given datasets are imbalanced.So, first we combined both of these dataset to a single dataset for training. To tackle `overfitting` we tried downsampling on majority class and upsampling on minority class.
+
+<p align="center">
+   <img src="./Screenshots/combined_data_distribution.png" width="450" height="400"/>
+</p>
+
 
 #### Aligning annotation labels to tokens
 
-In language model we convert text token to a particular number so that our model can process the data. As different model uses different tokenization scheme like word toekenizer, sub-word tokenizer etc. In sub-word tokenizer any token may broken into multiple tokens before converting into corresponding numerical value. For that there may be incoherence in tokens labels as our tokens are word level. So we implemented a fuction which will align our old lebels to new label that match the tokenized tokens.
+In language model, we convert text token to a particular number so that our model can process the data. As different model uses different tokenization scheme like word toekenizer, sub-word tokenizer etc. In sub-word tokenizer, any token may broken into multiple tokens before converting into corresponding numerical value. For that there may be incoherence in tokens labels as our tokens are word level. So we implemented a fuction which will align our old labels to new label that match the tokenized tokens.
 
 > All these preprocessing functions will be found in `utils/data_preprocessing.py` script.
 
@@ -152,7 +163,7 @@ For optimizer we used `AdamW` optimizer and for learning rate scheudler we tried
 We build custom `training loop` for training and validating our model performance. I have build custom training loop rather than using a trainer becasue it give more freedom to modify and experimenting with different parameter. We trained each of the model and done `3 fold cross-validation`. Performance of these models are listed in the following table. Cross-validation method was used as it gives us insights about models robustness and ensures more general model performance and no overfitting is occuring. 
 
 ### Post-processing
-During inference, we needed to do some post processing to get our desired output. As our model predict class for each tokens, we have to extract the postions where name token were predicted and convert these tokens to text format. For this we first extract the spans where a person name may occur then convert these spans to corresponding token values and the decode the tokens using tokenizer.deocde method. <br>
+During inference, we needed to do some post processing to get our desired output. As our model predict class for each tokens, we have to process these outputs and extracted name token need to be converted to text format. For this we first extract the spans where a person name may occur then convert these spans to corresponding token values and the decode the tokens using `tokenizer.deocde` method. <br>
 
 Example:<br>
 Given Text: আব্দুর রহিম নামের কাস্টমারকে একশ টাকা বাকি দিলাম <br>
