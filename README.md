@@ -9,6 +9,7 @@
   - [Preprocessing](#preprocessing)
   - [Modeling](#modeling)
   - [Post processing](#post-processing)
+  - [Results](#results)
   - [Setup](#setup)
   - [Run Training](#run-training)
   - [Inference](#inference)
@@ -25,6 +26,7 @@ Example -
 
 ### Solution Approach
 As this is a name entity extraction task, it was handled as `token classification task`. In token classification process we can predict which token belongs to name entity class and extract names from the given text. For the task, first I preprocessed the given data, making appropiate datasets for token classification modeling, then experimented with different huggingface models for the task. Then I train the models with these experimented parameters and build an end-to-end inference script.The inference script will load the best saved models (saved in training processe) and do prediction using the model and then post-process the model output for desire output format for given input.
+
 
 ### Datasets
 For this  task two dataset were used. These are open source datasets which can be downloaded from the following links.
@@ -112,10 +114,8 @@ After loading our data we did some data analysis. First we check all the all the
 
 ![2](Screenshots/dataset_distribution2.png)
 
-<br> From the distribution we found that there are not much data with person token so, we have combined both of these dataset to a single dataset for training. And to metigate data imbalance problem, we `downsample` data without person token so that it doesn't suffer overfitting problem.
-<br> After combining both of the data and downsampling majority class, our dataset looks like the following ditribution.
-
-![3](Screenshots/combined_data_distribution.png)
+#### Downsampling and Upsampling
+In classification task, if data is very imbalanced, model could suffer `overfitting problem`. From the distribution we found that there are not much data with person token First we try  we have combined both of these dataset to a single dataset for training. After that to tackle `overfitting` we tried downsampling on majority class and upsampling on minority class.
 
 #### Aligning annotation labels to tokens
 
@@ -157,6 +157,22 @@ During inference, we needed to do some post processing to get our desired output
 Example:<br>
 Given Text: আব্দুর রহিম নামের কাস্টমারকে একশ টাকা বাকি দিলাম <br>
 Extracted Names: ["আব্দুর রহিম"] <br>
+
+### Results
+
+
+| **Model**                                                  | **F1 Score** |
+|:----------------------------------------------------------:|:--------------------------------
+| bangla-bert-finetuned-ner                                  | 0.73          |
+| bangla-bert-base                                           | 0.77          |
+| bangla-bert-large                                          | 0.76          |
+| mbert                                                      | 0.78          |
+| bangla-bert-finetuned-ner  without normalization           | 0.78          |
+| bangla-bert-finetuned-ner + downsampled                    | 0.79          |
+| bangla-bert-finetuned-ner + upsampled                      | 0.78          |
+| bangla-bert-finetuned-ner + downsampled + upsampled        | 0.78          |
+| bangla-bert-large + downsampled + upsampled                | 0.74          |
+
 
 ### Running Scripts for training and Inference
 
