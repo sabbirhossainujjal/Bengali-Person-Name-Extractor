@@ -1,4 +1,5 @@
-"""This scripts run testing on test dataset and returns metrics values of the models.
+"""This scripts run testing on test dataset and returns metrics values of the models. 
+This scripts is written to evaluate data as dataset-1-test format. Giving input in other format may cause fatal errors.
 """
 
 import pandas as pd
