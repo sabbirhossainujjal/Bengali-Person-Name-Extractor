@@ -25,7 +25,7 @@ Example -
 
 
 ### Solution Approach
-As this is a name entity extraction task, it was handled as `token classification task`. In token classification process we can predict which token belongs to name entity class and extract names from the given text. For the task, first I preprocessed the given data, making appropiate datasets for token classification modeling, then experimented with different huggingface models for the task. Then I train the models with these experimented parameters and build an end-to-end inference script.The inference script will load the best saved models (saved in training processe) and do prediction using the model and then post-process the model output for desire output format for given input.
+As this is a name entity extraction task, it was handled as `token classification task`. In token classification process we can predict which token belongs to name entity class and extract names from this prediction. For the task, first I preprocessed the given data, making appropiate datasets for token classification modeling, then experimented with different huggingface models for the task. Then I train the models with these experimented parameters and build an end-to-end inference script.The inference script will load the best saved models (saved in training processe) and do prediction using the model and then post-process the model output for desire output format for given input.
 
 
 ### Datasets
@@ -35,7 +35,7 @@ Dataset-1: <a href= "https://github.com/Rifat1493/Bengali-NER/tree/master/annota
 <br> Dataset-2: <a href= "https://raw.githubusercontent.com/banglakit/bengali-ner-data/master/main.jsonl"> [banglakit/bengali-ner-data] </a>
 
 #### Dataset-1 description: 
-Dataset -1 contains annotation data in `.txt` file format. From this dataset repository we take train_data.txt and test_data.txt file for our task. These files resides in <a href= "https://github.com/Rifat1493/Bengali-NER/blob/master/Input/train_data.txt"> master/inptut/train_data.txt </a> and <a href= "https://github.com/Rifat1493/Bengali-NER/blob/master/Input/test_data.txt">master/inptut/test_data.txt </a>. <br>
+Dataset -1 contains annotation data in `.txt` file format. From this dataset repository `train_data.txt` and `test_data.txt` files were taken for this task. These files resides in <a href= "https://github.com/Rifat1493/Bengali-NER/blob/master/Input/train_data.txt"> master/inptut/train_data.txt </a> and <a href= "https://github.com/Rifat1493/Bengali-NER/blob/master/Input/test_data.txt">master/inptut/test_data.txt </a>. <br>
 
 `Total sentences in train.txt= 4612`<br>
 `Total sentences in test.txt= 1950`
@@ -92,13 +92,26 @@ Annotation format in dataset-2: <br>
 ### Preprocessing
 
 #### Dataset loading and adjusting annotation
-From the previous description we have seen that the two dataset are in two different format and their annotation format is totally different. So, we need to convert these data to a common format. So we have to pre-processe these data to convert these annotation to a common format. Moreover, there are some redundant annotations in the datasets like "ORG", "LOC" etc. We don't need these annotations. <br>
+From the previous description we have seen that the two dataset are in two different format and their annotation format is totally different. So, we need to convert these data to a common format. So we have to pre-process these data to convert these annotation to a common format. Moreover, there are some redundant annotations in the datasets like "ORG", "LOC" etc which we don't need for our task. <br>
 
-First we converted all the input text in a common format as language model expect a common input format. Our intented format is sentence level i.e all tokens of a sentence are combined in sentence not tokenized like in dataset-1. For that we converted dataset-1 to out intented format. <br>
+First we converted all the input text in a common format as language model expect a common input format. Our intented format is sentence level i.e. all tokens of a sentence are combined in sentence, not tokenized like in dataset-1. For that we converted dataset-1 to out intented format. <br>
 
-For our person name extraction task we only need `B-PER`(Begining of the name), `I-PER`(Inside of the name), `O`(others). As we alrady seen that the datasets are annoted differently and contains reduntant annotations which we don't need for our task like "ORG", "LOC" etc.So we converted annotations from "B-PERSON" to "B-PER", "I-PERSON" to "I-PER" and unnecessary annotations to "O". We transformed all the annotations in both dataset to our desired format. <br>
+For our person name extraction task, we only need `B-PER`(Begining of the name), `I-PER`(Inside of the name), `O`(others). As we have already seen that the datasets are annotated differently and contains reduntant annotations which we don't need for our task, we converted annotations into a common format. <br>
+
+| **Previous Annotation**                                    | **New Annotation** |
+|:----------------------------------------------------------:|:--------------------------------
+| B-PERSON                                                   | B-PER        |
+| I-PERSON                                                   | I-PER        |
+| U-PERSON                                                   | B-PER        |
+| L-PERSON                                                   | I-PER        |
+| B-ORG, U-ORG, I-ORG, L-ORG, B-LOC, I-LOC, TIM, O           | O            |
+
 
 Example:<br>
+`Text`: "লালপুর ( নাটোর ) প্রতিনিধি ব্রাহ্মণবাড়িয়া-২ ( সরাইল-আশুগঞ্জ ) আসনে নির্বাচন থেকে সরে দাঁড়িয়েছেন আওয়ামী লীগের নেতৃত্বাধীন ১৪-দলীয় জোটের শরিক জাসদের ( ইনু ) প্রার্থী আবু বকর	মো . ফিরোজ ।" <br>
+`new_annotation`: ["O","O", "O", "O", "O", "O", "O", "O", "O", "O", "O" ,"O","O","O", "O", "O", "O", "O", "O" ,"O","O","O" ,"B-PER","O","O" ,"B-PER", "I-PER", "B-PER" ,"I-PER","I-PER", "O"] <br>
+
+`Text`: "মো. নাহিদ হুসাইন নামের এক পরীক্ষার্থী অভিযোগ করেন, ইডেন মহিলা কলেজের পাঠাগার ভবনের দ্বিতীয় তলায় তাঁর পরীক্ষার আসন ছিল।" <br>
 `previous annotation`: ["B-PERSON", "I-PERSON", "L-PERSON", "O", "O", "O", "O", "O", "O", "B-ORG", "I-ORG", "L-ORG", "O", "O", "O", "O", "O", "O", "O", "O", "O"] <br>
 `new_annotation`: ["B-PER", "I-PER", "I-PER", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O"] <br>
 
