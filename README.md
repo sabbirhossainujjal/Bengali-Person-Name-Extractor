@@ -98,6 +98,7 @@ From the previous description we have seen that the two dataset are in two diffe
 First we converted all the input text in a common format as language model expect a common input format. Our intented format is sentence level i.e. all tokens of a sentence are combined in sentence, not tokenized like in dataset-1. For that we converted dataset-1 to out intented format. <br>
 
 For our person name extraction task, we only need `B-PER`(Begining of the name), `I-PER`(Inside of the name), `O`(others). As we have already seen that the datasets are annotated differently and contains reduntant annotations which we don't need for our task, we converted annotations into a common format. All the changes in annotation are listed in following table.<br>
+<br>
 
 | **Previous Annotation**                                    | **New Annotation** |
 |:----------------------------------------------------------:|:--------------------------------
@@ -239,7 +240,7 @@ For installing the necessary requirements, use the following bash snippet
 
 ```
 $ git clone https://github.com/VirusProton/Bengali_NER.git
-$ cd Bengali_NER/
+$ cd Bengali-Person-Name-Extractor/
 $ pip -m venv <env_name>
 $ source bin/<env_name>/activate 
 $ pip install -r requirements.txt
