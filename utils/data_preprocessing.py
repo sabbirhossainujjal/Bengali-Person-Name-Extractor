@@ -1,6 +1,5 @@
 import random
 import pandas as pd
-import matplotlib.pyplot as plt
 from bnlp import BasicTokenizer
 from sklearn.model_selection import StratifiedKFold
 
@@ -12,8 +11,6 @@ def check_common_entry(df1, df2):
     list1= [tuple(b_tokenizer.tokenize(txt)) for txt in df1['sentences']]
     list2= [tuple(b_tokenizer.tokenize(txt)) for txt in df2['sentences']]
     common= set(list1).intersection(set(list2))
-    
-#     print(f"No of Common sentences between given 2 datasets: {len(common)}")
     
     return common
 
@@ -42,6 +39,7 @@ def remove_common_entries(df, common):
     
     return df
 
+
 def remove_erroneous_entries(df):
     """
     Error entries are those which have unequal no of labels or words.
@@ -56,21 +54,55 @@ def remove_erroneous_entries(df):
     for i in range(len(temp_df)):
         if temp_df['len_labels'][i] != temp_df['len_words'][i]:
             error_.append(i)
-    print(f"Total Number of unmatched labels: {len(error_)}")
+    print(f"{len(error_)} no of data was detected as erroneous and discarded.")
     df= df.drop(error_).reset_index(drop= True)
     return df
 
-def undersampling(df):
+
+def downsampling(df):
+    """down-samples majority class data.
+    """
     random.seed(20)
     df['per_tag']= df['labels'].apply(lambda x: 1 if x.count("B-PER") > 0 else 0)
     index_0= df[df['per_tag']==0].index # indexes of negative samples (without Name entity)
     index_1= df[df['per_tag']==1].index # indexes of positive samples (with name entity)
-    index_n= None
+    index_del= None
     if len(index_0) > len(index_1):
         index = [i for i in index_0]
-        index_n= random.sample(index, k= len(index_0) - len(index_1))
-    if index_n is not None:
-        df= df.drop(index_n).reset_index(drop= True)
+        index_del= random.sample(index, k= len(index_0) - len(index_1))
+    elif len(index_1) > len(index_0):
+        index = [i for i in index_1]
+        index_del= random.sample(index, k= len(index_1) - len(index_0))
+    
+    if index_del is not None:
+        df= df.drop(index_del).reset_index(drop= True)
+    
+    return df
+
+
+def upsampling(df, upsample_size= 0.5):
+    """upsamples minority class data.
+    """
+    random.seed(20)
+    df['per_tag']= df['labels'].apply(lambda x: 1 if x.count("B-PER") > 0 else 0)
+    index_0= df[df['per_tag']==0].index # indexes of negative samples (without Name entity)
+    index_1= df[df['per_tag']==1].index # indexes of positive samples (with name entity)
+    index_add= None
+    
+    if len(index_0) > len(index_1): 
+        # upsampling class 1 
+        n_diff= len(index_0) > len(index_1)
+        index = [i for i in index_1]
+        index_add= random.sample(index, k= int(n_diff*upsample_size) if n_diff < len(index_1) else  int(len(index_1)*upsample_size) )
+    elif len(index_1) > len(index_0):
+        # upsampling class 0
+        n_diff= len(index_1) > len(index_0)
+        index = [i for i in index_0]
+        index_add= random.sample(index, k= int(n_diff*upsample_size) if n_diff < len(index_0) else  int(len(index_0)*upsample_size))
+
+    if index_add is not None:
+        temp_df= df.iloc[index_add].reset_index(drop= True)
+        df= pd.concat([df, temp_df], axis= 0).reset_index(drop= True)
     
     return df
 

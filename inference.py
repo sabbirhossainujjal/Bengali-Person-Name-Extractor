@@ -1,6 +1,10 @@
+"""This scripts runs an end-to-end inference. It takse a text input and returns extracted names in the text.
+"""
+
 import argparse
 import torch
 from utils.configuration import CONFIG
+from normalizer import normalize
 
 from utils.training_utils import get_tokenizer, NER_MODEL
 from utils.inference_utils import prediction_fn, show_names
@@ -36,14 +40,14 @@ def main():
         ## run inference for given text input
         outputs=[]
         if type(text) == str:
+            text= normalize(text)
             output= prediction_fn(text, model, tokenizer, CONFIG)
             outputs.append(output)
-            # print(text, outputs)
         elif type(text)== list:
             for txt in text:
+                txt= normalize(txt)
                 output= prediction_fn(txt, model, tokenizer, CONFIG)
                 outputs.append(output)
-                # print(txt, output)        
         else:
             outputs= None
             print("Please give input in string format or list of strings")

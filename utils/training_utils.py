@@ -1,3 +1,6 @@
+"""_This scripts contains all the necessary functions to run training.
+"""
+
 import os
 import numpy as np
 import torch
@@ -5,7 +8,6 @@ import torch.nn as nn
 from torch.optim import lr_scheduler, AdamW, Adam
 from torch.utils.data import DataLoader, Dataset
 
-# import transformers
 from transformers import AutoModel, AutoConfig, AutoTokenizer
 from datasets import load_metric
 
@@ -36,8 +38,15 @@ def align_labels_with_tokens(tokens, labels):
     """
     new_labels= []
     word_ids= tokens.word_ids()
+    previous_word_id= None
     for word_id in word_ids:
-        label= -100 if word_id is None else label2id[labels[word_id]] # [CLS] has token id= 101. [PAD] token id= 0 ## tokenizer.pad_token_id
+        if word_id is None:
+            label= -100
+        elif word_id != previous_word_id:
+            label= label2id[labels[word_id]]
+        else:
+            label= -100 if word_id is None else label2id[labels[word_id]] # [CLS] has token id= 101. [PAD] token id= 0 ## tokenizer.pad_token_id
+        previous_word_id= word_id
         new_labels.append(label)
     
     """-100 is used for all of the speciall token ['[CLS], ['SEP'], [PAD]'], which will help to compute loss for slot filling"""
@@ -59,7 +68,7 @@ class CustomDataset(Dataset):
     attention_mask and targets labels.
     """
 
-    def __init__(self, df, tokenizer, cfg):
+    def __init__(self, df, tokenizer, cfg= CONFIG):
         self.df= df
         self.cfg= cfg
         self.tokenizer= tokenizer
@@ -73,11 +82,9 @@ class CustomDataset(Dataset):
         labels= self.df.labels[index]
         inputs= self.tokenizer(text,
                                 truncation= True,
-#                                add_special_tokens= True,
                                 max_length= self.max_length,
                                 padding= True
                                 )
-        
         new_labels= align_labels_with_tokens(inputs, labels)
 
         return {
@@ -121,21 +128,19 @@ class Collate:
 
 def prepare_loader(df, tokenizer, fold, collate_fn, cfg):
     """ This function will prepare batched data from the given dataset which can be feed to language models
-
     Args:
         df (DataFrame): Dataset dataframe
         tokenizer: tokenizer for tokenizing
         fold (int): which fold do we want to put as validation.
         collate_fn : datacollator object
         cfg : configuration that contains all the important parameters. (CONFIG.py file)
-
     Returns:
         train_dataloader,
         validation_dataloader
     """
+
     df_train= df[df.fold != fold].reset_index(drop= True) # 2 fold out of 3 fold is used as training data, and 1 fold for validation.
     df_valid= df[df.fold == fold].reset_index(drop= True)
-    # valid_labels = df_valid['labels'].values
     
     # converting dataFrame to dataset.
     train_dataset= CustomDataset(df_train, tokenizer, cfg)
@@ -172,6 +177,7 @@ class NER_MODEL(nn.Module):
         super(NER_MODEL, self).__init__()
         self.cfg= cfg
         self.num_labels= self.cfg.num_labels
+
         if model_name != None:
             self.model_name= model_name
         else:
@@ -190,9 +196,8 @@ class NER_MODEL(nn.Module):
                             )
         
         sequence_output= outputs[0]
-#         pooled_output= outputs[1]
-
-        entity_logits= sequence_output #self.dropout(sequence_output)
+        #entity_logits= self.dropout(sequence_output)
+        entity_logits= sequence_output 
         entity_logits= self.linear(entity_logits)
         
         return entity_logits
@@ -203,11 +208,9 @@ class NER_MODEL(nn.Module):
 metric = load_metric("seqeval")
 def compute_metrics(logits, labels):
     """This function will generate f1_score and other metrics from ourt prediction and true labels
-
     Args:
         logits : predictions
         labels : true labels
-
     Returns:
         f1_score
     """
@@ -233,14 +236,13 @@ def token_loss_fn(logits, labels, attention_mask= None):
     returns:
         crossentropy loss
     """
-    loss_fn= nn.CrossEntropyLoss(ignore_index= -100) # for ignoring special tokens
+    loss_fn= nn.CrossEntropyLoss(ignore_index= -100)
     num_labels= CONFIG.num_labels
     
     if attention_mask is not None:
         mask= attention_mask.view(-1) == 1 #mask for keeping the effective part
         active_logits= logits.view(-1, num_labels)[mask]
         active_labels= labels.view(-1)[mask]
-#         print(active_logits.size(), active_labels.size())
         entity_loss= loss_fn(active_logits, active_labels)
         
     else:
@@ -288,15 +290,15 @@ def train_one_epoch(model, dataloader, optimizer, scheduler, epoch,  cfg= CONFIG
         training_loss
         f1_score
     """
-    model.train()
 
+    model.train()
     dataset_size= 0
     running_loss= 0.0
     score= []
     device= cfg.device
-    
     progress_bar= tqdm(enumerate(dataloader), total= len(dataloader))
     steps= len(dataloader)
+
     for step, data in progress_bar:
         ids= data['input_ids'].to(device, dtype= torch.long)
         masks= data['attention_mask'].to(device, dtype= torch.long)
@@ -348,20 +350,18 @@ def valid_one_epoch(model, dataloader, epoch, cfg= CONFIG):
         validation_loss
         f1_score
     """
+
     model.eval()
-    
     dataset_size= 0
     running_loss= 0.0
     score= []
     device= cfg.device
     progress_bar= tqdm(enumerate(dataloader), total= len(dataloader))
-    steps= len(dataloader)
     
     for step, data in progress_bar:
         ids= data['input_ids'].to(device, dtype= torch.long)
         masks= data['attention_mask'].to(device, dtype= torch.long)
         targets= data['targets'].to(device, dtype= torch.long)
-        
         batch_size= ids.size(0)
         
         with torch.no_grad():
@@ -374,7 +374,6 @@ def valid_one_epoch(model, dataloader, epoch, cfg= CONFIG):
         if cfg.gradient_accumulation_steps > 1:
             loss= loss/ cfg.gradient_accumulation_steps
         
-        
         running_loss += (loss.item() * batch_size)
         dataset_size += batch_size
         epoch_loss= running_loss/ dataset_size
@@ -384,6 +383,7 @@ def valid_one_epoch(model, dataloader, epoch, cfg= CONFIG):
                                 Valid_loss= epoch_loss,
                                 Valid_F1_Score= epoch_f1_score,
                                 )
+        
     return epoch_loss, epoch_f1_score #
 
 ###################################################################
@@ -393,22 +393,20 @@ from collections import defaultdict
 def training_loop(model, train_loader, valid_loader, optimizer, scheduler, fold, cfg= CONFIG, num_epochs= CONFIG.num_epochs, patience= 3):
     
     start= time.time()
-    best_loss= np.inf
     best_score= 0
     trigger_times= 0
     history= defaultdict(list)
     
     for epoch in range(1, num_epochs+1):
-        train_epoch_loss, train_f1_score= train_one_epoch(model, train_loader, optimizer, scheduler, epoch, cfg= cfg)# model, dataloader, optimizer, scheduler, epoch,  cfg= CONFIG
-        valid_epoch_loss, valid_f1_score = valid_one_epoch(model, valid_loader, epoch, cfg= cfg)# model, dataloader, epoch, cfg= CONFIG
+        train_epoch_loss, train_f1_score= train_one_epoch(model, train_loader, optimizer, scheduler, epoch, cfg= cfg)
+        valid_epoch_loss, valid_f1_score = valid_one_epoch(model, valid_loader, epoch, cfg= cfg)
         
         history['train_loss'].append(train_epoch_loss)
         history['valid_loss'].append(valid_epoch_loss)
         history['train_f1_score'].append(train_f1_score)
         history['valid_f1_score'].append(valid_f1_score)
         
-        #####
-        if  valid_f1_score >= best_score: #valid_epoch_loss #best_loss
+        if  valid_f1_score >= best_score: 
             trigger_times= 0
             print(f"Vlaidation Score Improved {best_score} ---> {valid_f1_score}")
             best_score= valid_f1_score
@@ -429,3 +427,28 @@ def training_loop(model, train_loader, valid_loader, optimizer, scheduler, fold,
     return history, valid_epoch_loss, best_score
 
 ########################################################
+
+def testing_loop(model, dataloader, device= CONFIG.device):
+
+    model.eval()
+    score= []
+    progress_bar= tqdm(enumerate(dataloader), total= len(dataloader))
+    
+    for step, data in progress_bar:
+        ids= data['input_ids'].to(device, dtype= torch.long)
+        masks= data['attention_mask'].to(device, dtype= torch.long)
+        targets= data['targets'].to(device, dtype= torch.long)
+        
+        with torch.no_grad():
+            outputs= model(ids, masks)
+            f1_score= compute_metrics(logits= outputs, labels= targets)
+        
+        score.append(f1_score)
+        f1_score= np.mean(score)
+        progress_bar.set_postfix(test_F1_Score= f1_score)
+    
+    print(f"====== xxxx ======")
+    print(f"Overall f1_score: {np.mean(np.mean(f1_score))}")
+    print(f"====== xxxx ======")
+    
+    return f1_score
