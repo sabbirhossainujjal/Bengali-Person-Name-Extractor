@@ -199,7 +199,7 @@ Extracted Names: ["আব্দুর রহিম"] <br>
 | bangla-bert-ner-finetuned + downsampled + upsampled                         | 0.801          |
 | bangla-bert-large                                                           | 0.752          |
 | bangla-bert-large + downsampled                                             | 0.788          |
-| bangla-bert-large + downsampled + upsampled                                 | 0.74           |
+| bangla-bert-large + downsampled + upsampled                                 | 0.781          |
 
 N.B: All the experimented done with combined data if not specified.
 
