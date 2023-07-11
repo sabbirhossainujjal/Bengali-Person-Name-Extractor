@@ -19,6 +19,7 @@ def main():
                                 "csebuetnlp/banglabert",
                                 "csebuetnlp/banglabert_large",
                                 "nafi-zaman/mbert-finetuned-ner"])
+    parser.add_argument("--dataset_no", type= int, default= CONFIG.dataset_no, help= "Choice of dataset for training.")
     parser.add_argument("--do_normalize", type= bool, default= CONFIG.do_normalize, help= "Normalize input text or not.")
     parser.add_argument("--do_downsampling", type= bool, default= CONFIG.do_downsampling, help= "Do downsample majority class or not.")
     parser.add_argument("--do_upsampling", type= bool, default= CONFIG.do_upsampling, help= "Do upsample minority class or not.")
@@ -38,6 +39,7 @@ def main():
     args = parser.parse_args()
     CONFIG.model_name= args.model_name
     CONFIG.output_dir= args.output_dir
+    CONFIG.dataset_no= args.dataset_no
     CONFIG.do_normalize= args.do_normalize
     CONFIG.do_downsampling= args.do_downsampling
     CONFIG.do_upsampling= args.do_upsampling
@@ -58,8 +60,13 @@ def main():
     dataset1_train= remove_erroneous_entries(dataset1_train)
     dataset2= remove_erroneous_entries(dataset2)
 
-    ## As datasets are small in size we concat dataset 1 and dataset 2 for training.
-    dataset= pd.concat([dataset2, dataset1_train], axis= 0).reset_index(drop= True)
+    #chose dataset for training
+    if CONFIG.dataset_no == 1:
+        dataset= dataset1_train
+    elif CONFIG.dataset_no == 2:
+        dataset= dataset2
+    else:
+        dataset= pd.concat([dataset2, dataset1_train], axis= 0).reset_index(drop= True)
 
     if CONFIG.do_upsampling:
         dataset= upsampling(df= dataset, upsample_size= 0.5)
@@ -97,9 +104,7 @@ def main():
         print(f"Fold [{fold}] avg score: {f1_score}\n")
         fold_scores.append(f1_score)
         
-        if fold < CONFIG.n_folds-1:
-            del model
-        del train_loader, valid_loader
+        del model, train_loader, valid_loader
 
     print("====== xxxx ======")
     print(f"Overall score: {np.mean(np.mean(fold_scores, axis= 0))}")
