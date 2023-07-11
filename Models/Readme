@@ -1,0 +1,5 @@
+Model	                                model_name	                                             model_checkpoint
+bangla-bert-ner-finetuned	"nafi-zaman/celloscope-28000-ner-banglabert-finetuned"	"./Models/banglabert-ner-finetuned.bin"
+bangla-bert-base	        "csebuetnlp/banglabert"	                                   "./Models/bangla-bert-base.bin"
+bangla-bert-large	       "csebuetnlp/banglabert_large"	                            "./Models/bangla-bert-large.bin"
+mbert	                    "nafi-zaman/mbert-finetuned-ner"	                                "Models/mbert.bin"
