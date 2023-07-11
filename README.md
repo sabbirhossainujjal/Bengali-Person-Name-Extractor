@@ -191,8 +191,8 @@ Extracted Names: ["আব্দুর রহিম"] <br>
 |:----------------------------------------------------------:|:--------------------------------
 | mbert                                                                       | 0.753          |
 | bangla-bert-base                                                            | 0.732          |
-| bangla-bert-ner-finetuned (only dataset-1)                                  | 0.702         |
-| bangla-bert-ner-finetuned (only dataset-2)                                  | 0.695         |
+| bangla-bert-ner-finetuned (only dataset-1)                                  | 0.702          |
+| bangla-bert-ner-finetuned (only dataset-2)                                  | 0.695          |
 | bangla-bert-ner-finetuned (combined data)                                   | 0.768          |
 | bangla-bert-ner-finetuned + downsampled                                     | 0.711          |
 | **bangla-bert-ner-finetuned + combined + upsampled**                        | **0.811**      |
@@ -247,8 +247,8 @@ For installing the necessary requirements, use the following bash snippet
 ```bash
 $ git clone https://github.com/VirusProton/Bengali-Person-Name-Extractor.git
 $ cd Bengali-Person-Name-Extractor/
-$ pip -m venv <env_name>
-$ source bin/<env_name>/activate 
+$ python3 -m venv <env_name>
+$ source <env_name>/bin/activate 
 $ pip install -r requirements.txt
 ```
 ##### Normalizer
@@ -264,13 +264,13 @@ To see list of all available options, do `python training.py -h`. There are two 
 
 
 #### Finetuning
-For finetuning a minimal example is as follows:
+For finetuning, a minimal example is as follows:
 
 ```bash
 $ python training.py \
     --debug True \
     --model_name "csebuetnlp/banglabert" \
-    --output_dir "Models/" \
+    --output_dir "./Models/" \
     --dataset_no 3 \
     --do_normalize True \
     --n_folds 2 \
@@ -291,9 +291,9 @@ N.B: This script is build for data format as dataset-1. Please data in proper fo
 
 ```bash
 $ python testing.py \
-    --test_data_path ""
+    --test_data_path "<path>"
     --model_name "csebuetnlp/banglabert" \
-    --model_checkpoint "Models/best_model_0.bin" \
+    --model_checkpoint "./Models/best_model_0.bin" \
     --test_batch_size 16 \
     --max_length 256 \
 ```
@@ -313,7 +313,7 @@ For run end-to-end inference use following bash command snippet:
 $ python inference.py \
     --text "আব্দুর রহিম নামের কাস্টমারকে একশ টাকা বাকি দিলাম"
     --model_name "csebuetnlp/banglabert" \
-    --model_checkpoint "Models/best_model_0.bin"
+    --model_checkpoint "./Models/best_model_0.bin"
 ```
 
 
