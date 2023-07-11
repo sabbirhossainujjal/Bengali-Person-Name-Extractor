@@ -1,7 +1,7 @@
-# Bengali_NER
+# Bengali-Person-Name-Extractor
 
 ## Table of Contents
-- [Bengali_NER](#bengali_ner)
+- [Bengali Person Name Extractor](#bengali-person-name-extractor)
   - [Table of Contents](#table-of-contents)
   - [Problem Statement](#problem-statement)
   - [Solution Approach](#solution-approach)
@@ -27,11 +27,12 @@ Example -
 ### Solution Approach
 As this is a name entity extraction task, it was handled as `token classification task`. In token classification process we can predict which token belongs to name entity class and extract names from this prediction. For the task, first I preprocessed the given data, making appropiate datasets for token classification modeling, then experimented with different huggingface models for the task. Then I train the models with these experimented parameters and build an end-to-end inference script.The inference script will load the best saved models (saved in training processe) and do prediction using the model and then post-process the model output for desire output format for given input.
 
+ ##### N.B: Coding is done in `python` and `pytorch` was used as ML framework.
 
 ### Datasets
 For this  task two dataset were used. These are open source datasets which can be downloaded from the following links.
 
-Dataset-1: <a href= "https://github.com/Rifat1493/Bengali-NER/tree/master/annotated%20data"> [Rifat1493/Bengali-NER] </a>
+Dataset-1: <a href= "https://github.com/Rifat1493/Bengali-NER/tree/master/Input"> [Rifat1493/Bengali-NER] </a>
 <br> Dataset-2: <a href= "https://raw.githubusercontent.com/banglakit/bengali-ner-data/master/main.jsonl"> [banglakit/bengali-ner-data] </a>
 
 #### Dataset-1 description: 
@@ -85,7 +86,7 @@ Annotation format in dataset-2: <br>
 #### Dataset disribution:
 
 <p align="center">
-   <img src="./Screenshots/dataset_distribution.png" width="450" height="450"/>
+   <img src="./Screenshots/dataset_distribution.png" width="450" height="300"/>
 </p>
 
 
@@ -96,7 +97,8 @@ From the previous description we have seen that the two dataset are in two diffe
 
 First we converted all the input text in a common format as language model expect a common input format. Our intented format is sentence level i.e. all tokens of a sentence are combined in sentence, not tokenized like in dataset-1. For that we converted dataset-1 to out intented format. <br>
 
-For our person name extraction task, we only need `B-PER`(Begining of the name), `I-PER`(Inside of the name), `O`(others). As we have already seen that the datasets are annotated differently and contains reduntant annotations which we don't need for our task, we converted annotations into a common format. <br>
+For our person name extraction task, we only need `B-PER`(Begining of the name), `I-PER`(Inside of the name), `O`(others). As we have already seen that the datasets are annotated differently and contains reduntant annotations which we don't need for our task, we converted annotations into a common format. All the changes in annotation are listed in following table.<br>
+<br>
 
 | **Previous Annotation**                                    | **New Annotation** |
 |:----------------------------------------------------------:|:--------------------------------
@@ -129,15 +131,15 @@ After loading our data, we did some data analysis. First, we check if all the da
 <br> Next we check the distribution of our datasets. We checked how many input entries contains name entity. From our investigation, we found that dataset is highly imbalanced and there were small ammount of data with name entity in our datasets. The distribution of these datasets are given bellow.
 
 <p align="center">
-   <img src="./Screenshots/dataset_distribution2.png" width="450" height="450"/>
+   <img src="./Screenshots/dataset_distribution2.png" width="450" height="300"/>
 </p>
 
 
 #### Downsampling and Upsampling
-In classification task, if training data is very imbalanced, model will suffer from `overfitting problem`. From the distribution we found that the given datasets are imbalanced.So, first we combined both of these dataset to a single dataset for training. To tackle `overfitting` we tried downsampling on majority class and upsampling on minority class.
+In classification task, if training data is very imbalanced, model will suffer from `overfitting problem`. From the distribution we found that the given datasets are imbalanced.So, first we combined both of these dataset to a single dataset for training. To tackle `overfitting` we tried downsampling on majority class and upsampling on minority class.<br>
 
 <p align="center">
-   <img src="./Screenshots/combined_data_distribution.png" width="450" height="400"/>
+   <img src="./Screenshots/combined_data_distribution.png" width="450" height="300"/>
 </p>
 
 
@@ -185,18 +187,24 @@ Extracted Names: ["আব্দুর রহিম"] <br>
 ### Results
 
 
-| **Model**                                                  | **F1 Score** |
+| **Model**                                                                   | **F1 Score** |
 |:----------------------------------------------------------:|:--------------------------------
-| bangla-bert-finetuned-ner                                  | 0.73          |
-| bangla-bert-base                                           | 0.77          |
-| bangla-bert-large                                          | 0.76          |
-| mbert                                                      | 0.78          |
-| bangla-bert-finetuned-ner  without normalization           | 0.78          |
-| bangla-bert-finetuned-ner + downsampled                    | 0.79          |
-| bangla-bert-finetuned-ner + upsampled                      | 0.78          |
-| bangla-bert-finetuned-ner + downsampled + upsampled        | 0.78          |
-| bangla-bert-large + downsampled + upsampled                | 0.74          |
+| mbert                                                                       | 0.753          |
+| bangla-bert-base                                                            | 0.732          |
+| bangla-bert-ner-finetuned (only dataset-1)                                  | 0.702         |
+| bangla-bert-ner-finetuned (only dataset-2)                                  | 0.695         |
+| bangla-bert-ner-finetuned (combined data)                                   | 0.768          |
+| bangla-bert-ner-finetuned + downsampled                                     | 0.711          |
+| **bangla-bert-ner-finetuned + combined + upsampled**                        | **0.811**      |
+| bangla-bert-ner-finetuned + downsampled + upsampled                         | 0.801          |
+| bangla-bert-large                                                           | 0.752          |
+| bangla-bert-large + downsampled                                             | 0.788          |
+| bangla-bert-large + downsampled + upsampled                                 | 0.74           |
 
+N.B: All the experimented done with combined data if not specified.
+
+#### Result analysis: 
+From the above table we can see different models performance. From the experiment we find best result for bangla-bert-ner-finetuned with upsampled dataset training. So, with larger dataset we can also get better results. We can also see that for larger model, without dataset balancing gives lower performance compare to balanced dataset [upsampled, downsampled] because they tends to suffer overfitting problem easily than lighter models.
 
 ### Running Scripts for training and Inference
 
@@ -215,6 +223,7 @@ Bengali_NER/
     └── training_utils.py
     └── inference_utils.py
 ├── training.py
+├── testing.py
 ├── inference.py
 └── requirements.txt
 
@@ -226,7 +235,8 @@ Bengali_NER/
 * `training_utils.py`: Contains all the helper function for training like CustomDataset class, NER_MODEL class etc.<br>
 * `inference_utils.py`: Contains all the helper function for prediction and post-processing.<br>
 * `training.py`: Combines all the helping functions for training and run training.<br>
-* `inference.py`: Combines all helper functions for inference and do end-to-end inference. <br>
+* `testing.py`: Computes model performance on test dataset and returns metrics values. <br>
+* `inference.py`: End-to-End inference script. Combines all helper functions for inference and do end-to-end inference. <br>
 * `requirements.txt`: All required module list.
 
 
@@ -234,15 +244,15 @@ Bengali_NER/
 
 For installing the necessary requirements, use the following bash snippet
 
-```
+```bash
 $ git clone https://github.com/VirusProton/Bengali_NER.git
-$ cd Bengali_NER/
+$ cd Bengali-Person-Name-Extractor/
 $ pip -m venv <env_name>
 $ source bin/<env_name>/activate 
 $ pip install -r requirements.txt
 ```
 ##### Normalizer
-``` 
+``` bash
 $ pip install git+https://github.com/csebuetnlp/normalizer
 ```
 
@@ -257,19 +267,37 @@ To see list of all available options, do `python training.py -h`. There are two 
 For finetuning a minimal example is as follows:
 
 ```bash
-$ python ./training.py \
+$ python training.py \
     --debug True \
     --model_name "csebuetnlp/banglabert" \
     --output_dir "Models/" \
+    --dataset_no 3 \
+    --do_normalize True \
     --n_folds 2 \
     --num_epochs 3 \
-    --learning_rate= 2e-5 \
+    --learning_rate 2e-5 \
     --gradient_accumulation_steps 1 \
     --scheduler "linear"  \
     --train_batch_size 8 \
-    --valid_batch_size=16 \
+    --valid_batch_size 16 \
     --max_length 256 \
 ```
+
+### Testing
+This script run testing on test dataset and returns model prformance (f1_score).<br>
+
+To see list of all available options, do `python testing.py -h`
+N.B: This script is build for data format as dataset-1. Please data in proper format.  
+
+```bash
+$ python testing.py \
+    --test_data_path ""
+    --model_name "csebuetnlp/banglabert" \
+    --model_checkpoint "Models/best_model_0.bin" \
+    --test_batch_size 16 \
+    --max_length 256 \
+```
+
 
 
  ### Inference 

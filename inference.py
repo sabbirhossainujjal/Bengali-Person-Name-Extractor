@@ -1,6 +1,10 @@
+"""This scripts runs an end-to-end inference. It takse a text input and returns extracted names in the text.
+"""
+
 import argparse
 import torch
 from utils.configuration import CONFIG
+from normalizer import normalize
 
 from utils.training_utils import get_tokenizer, NER_MODEL
 from utils.inference_utils import prediction_fn, show_names
@@ -36,14 +40,14 @@ def main():
         ## run inference for given text input
         outputs=[]
         if type(text) == str:
+            text= normalize(text)
             output= prediction_fn(text, model, tokenizer, CONFIG)
             outputs.append(output)
-            # print(text, outputs)
         elif type(text)== list:
             for txt in text:
+                txt= normalize(txt)
                 output= prediction_fn(txt, model, tokenizer, CONFIG)
                 outputs.append(output)
-                # print(txt, output)        
         else:
             outputs= None
             print("Please give input in string format or list of strings")
@@ -56,3 +60,12 @@ def main():
 
 if __name__ == "__main__":
     main()
+"""
+give text input as one of the following format.
+text=  "আন্তর্জাতিক অপরাধ ট্রাইব্যুনাল-১-এর চেয়ারম্যান বিচারপতি এ টি এম ফজলে কবীর অবসর নিয়েছেন ।" 
+text= ["আব্দুর রহিম নামের কাস্টমারকে একশ টাকা বাকি দিলাম",
+       "আন্তর্জাতিক অপরাধ ট্রাইব্যুনাল-১-এর চেয়ারম্যান বিচারপতি এ টি এম ফজলে কবীর অবসর নিয়েছেন ।", 
+       "ব্যাংকের চেয়ারম্যান ও ঢাকা বিশ্ববিদ্যালয়ের ইন্টারন্যাশনাল বিজনেস বিভাগের অধ্যাপক খন্দকার বজলুল হক প্রথম আলো ডটকমকে জানান, বিকেল তিনটা ৫০ মিনিটে তিনি এ ধরনের অভিযোগ পেয়েছেন।",
+       "একই সঙ্গে অভিযোগ তদন্তে বিশ্ববিদ্যালয়ের কোষাধ্যক্ষ সায়েন উদ্দিনকে প্রধান করে পাঁচ সদস্যের কমিটি গঠন করা হয়েছে।",
+      ]
+"""
