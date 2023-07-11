@@ -245,7 +245,7 @@ Bengali_NER/
 For installing the necessary requirements, use the following bash snippet
 
 ```bash
-$ git clone https://github.com/VirusProton/Bengali_NER.git
+$ git clone https://github.com/VirusProton/Bengali-Person-Name-Extractor.git
 $ cd Bengali-Person-Name-Extractor/
 $ pip -m venv <env_name>
 $ source bin/<env_name>/activate 
