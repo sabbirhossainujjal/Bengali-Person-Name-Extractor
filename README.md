@@ -12,7 +12,9 @@
   - [Results](#results)
   - [Setup](#setup)
   - [Run Training](#run-training)
+  - [Testing](#testing)
   - [Inference](#inference)
+  - [Run in Colab](#commands-to-run-in-colab)
 
 ### Problem Statement
 Building a person-name extractor for Bangla. It will take a sentence as input and output the person name present in the input sentence. The model should also be able to handle cases where no person’s name is present in the input sentence.
@@ -225,6 +227,7 @@ Bengali_NER/
 ├── training.py
 ├── testing.py
 ├── inference.py
+├── Person_Name_Extractor.ipynb
 └── requirements.txt
 
 ```
@@ -238,6 +241,7 @@ Bengali_NER/
 * `testing.py`: Computes model performance on test dataset and returns metrics values. <br>
 * `inference.py`: End-to-End inference script. Combines all helper functions for inference and do end-to-end inference. <br>
 * `requirements.txt`: All required module list.
+* `Person_Name_Extractor.ipynb`: All code are combined in one jupyter notebook to run interactively.
 
 
  ### Setup
@@ -284,7 +288,7 @@ $ python training.py \
     --scheduler "linear"  \
     --train_batch_size 8 \
     --valid_batch_size 16 \
-    --max_length 256 \
+    --max_length 128 
 ```
 
 #### Downloading Trained Weights
@@ -307,11 +311,10 @@ N.B: This script is build for data format as dataset-1. Please data in proper fo
 
 ```bash
 $ python testing.py \
-    --test_data_path "<path>"
     --model_name "csebuetnlp/banglabert" \
     --model_checkpoint "./Models/best_model_0.bin" \
     --test_batch_size 16 \
-    --max_length 256 \
+    --max_length 128 
 ```
 
 N.B: To run with proper weights and proper model name please follow the following format.
@@ -334,9 +337,36 @@ For run end-to-end inference use following bash command snippet:
 
 ```bash
 $ python inference.py \
-    --text "আব্দুর রহিম নামের কাস্টমারকে একশ টাকা বাকি দিলাম"
+    --text "আব্দুর রহিম নামের কাস্টমারকে একশ টাকা বাকি দিলাম" \
     --model_name "csebuetnlp/banglabert" \
     --model_checkpoint "./Models/best_model_0.bin"
 ```
 
 #### N.B: Please adjust certain commands if you are running these in windows or MacOS
+
+### Commands to run in Colab
+Run the following commands to evaluate the whole process.
+
+```
+! git clone https://github.com/VirusProton/Bengali-Person-Name-Extractor.git
+%cd Bengali-Person-Name-Extractor/
+! python3 -m venv venv
+! source venv/bin/activate 
+! pip install -r requirements.txt
+
+! pip install git+https://github.com/csebuetnlp/normalizer
+#training
+! python training.py --debug False --model_name "csebuetnlp/banglabert" --output_dir "./Models/" --dataset_no 3 --do_normalize True --n_folds 2 --num_epochs 3 --learning_rate 2e-5 --gradient_accumulation_steps 1 --scheduler "linear"  --train_batch_size 8 --valid_batch_size 16 --max_length 128
+
+#Weights downloading and uzip
+!pip install gdown
+!gdown --id 1IHYJbYYjC1x3XWk5aQ8qdGeNYOHIM70q
+!unzip Models.zip
+
+#Testing
+! python testing.py --model_name "csebuetnlp/banglabert" --model_checkpoint "./Models/bangla-bert-base.bin" --test_batch_size 16 --max_length 128
+
+#Inference
+text=["আব্দুর রহিম নামের কাস্টমারকে একশ টাকা বাকি দিলাম" , "অর্থনীতি ও আর্থসামাজিক বেশির ভাগ সূচকে বাংলাদেশ ছাড়িয়ে গেছে দক্ষিণ এশিয়াকে ।"]
+! python inference.py --text text --model_name "csebuetnlp/banglabert" --model_checkpoint "./Models/bangla-bert-base.bin"
+```
