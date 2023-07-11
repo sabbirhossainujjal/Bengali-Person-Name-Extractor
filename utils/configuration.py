@@ -5,19 +5,20 @@ class CONFIG:
     train= True #False #True
     debug= True #False #
     seed= 20
-    output_dir= "/media/sabbir/E/Research/Bengali-NER/Models/"
-    data_path1_train= "/media/sabbir/E/Research/Bengali-NER/Datasets/dataset_1_train.txt"
-    test_data_path= "/media/sabbir/E/Research/Bengali-NER/Datasets/dataset_1_test.txt"
-    data_path2= "/media/sabbir/E/Research/Bengali-NER/Datasets/dataset_2.jsonl"
+    output_dir= "./Models/"
+    data_path1_train= "./Datasets/dataset_1_train.txt"
+    test_data_path= "./Datasets/dataset_1_test.txt"
+    data_path2= "./Datasets/dataset_2.jsonl"
 
     n_folds= 3
-    num_epochs= 50
+    num_epochs= 10
     label_names=['O', 'B-PER', 'I-PER']
     num_labels= len(label_names)
     model_name= "nafi-zaman/celloscope-28000-ner-banglabert-finetuned"  ##"csebuetnlp/banglabert" #"csebuetnlp/banglabert_large"  #"nafi-zaman/mbert-finetuned-ner" #
-    model_checkpoint= "/media/sabbir/E/Research/Bengali-NER/Models/banglabert-ner-finetuned/best_model_0.bin"
-    max_length= 256
+    model_checkpoint= "./Models/best_model_0.bin"
+    max_length= 126
 
+    dataset_no= 3 # 1: Train on dataset-1 # 2: Train on dataset-2 # 3: Train on combined dataset
     do_normalize= True
     do_downsampling= True
     do_upsampling= True
