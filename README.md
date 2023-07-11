@@ -356,7 +356,8 @@ Run the following commands to evaluate the whole process.
 
 ! pip install git+https://github.com/csebuetnlp/normalizer
 #training
-! python training.py --debug False --model_name "csebuetnlp/banglabert" --output_dir "./Models/" --dataset_no 3 --do_normalize True --n_folds 2 --num_epochs 3 --learning_rate 2e-5 --gradient_accumulation_steps 1 --scheduler "linear"  --train_batch_size 8 --valid_batch_size 16 --max_length 128
+# Please change model_name according to your training strategy.
+! python training.py --debug False --model_name "nafi-zaman/celloscope-28000-ner-banglabert-finetuned" --output_dir "./Models/" --dataset_no 3 --do_normalize True --n_folds 2 --num_epochs 3 --learning_rate 2e-5 --gradient_accumulation_steps 1 --scheduler "linear"  --train_batch_size 8 --valid_batch_size 16 --max_length 128
 
 #Weights downloading and uzip
 !pip install gdown
@@ -364,9 +365,10 @@ Run the following commands to evaluate the whole process.
 !unzip Models.zip
 
 #Testing
-! python testing.py --model_name "csebuetnlp/banglabert" --model_checkpoint "./Models/bangla-bert-base.bin" --test_batch_size 16 --max_length 128
+# please provide accurate model_name and its corresponding model_checkpoint correctly
+! python testing.py --model_name "nafi-zaman/celloscope-28000-ner-banglabert-finetuned" --model_checkpoint "./Models/banglabert-ner-finetuned.bin" --test_batch_size 16 --max_length 128
 
 #Inference
 text=["আব্দুর রহিম নামের কাস্টমারকে একশ টাকা বাকি দিলাম" , "অর্থনীতি ও আর্থসামাজিক বেশির ভাগ সূচকে বাংলাদেশ ছাড়িয়ে গেছে দক্ষিণ এশিয়াকে ।"]
-! python inference.py --text text --model_name "csebuetnlp/banglabert" --model_checkpoint "./Models/bangla-bert-base.bin"
+! python inference.py --text text --model_name "nafi-zaman/celloscope-28000-ner-banglabert-finetuned" --model_checkpoint "./Models/banglabert-ner-finetuned.bin"
 ```
