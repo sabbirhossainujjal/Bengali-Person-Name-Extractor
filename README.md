@@ -251,6 +251,9 @@ $ python3 -m venv <env_name>
 $ source <env_name>/bin/activate 
 $ pip install -r requirements.txt
 ```
+
+N.B: Please adjust commands if you are running these other than linux terminal i.e. windows cmd or google colab.
+
 ##### Normalizer
 ``` bash
 $ pip install git+https://github.com/csebuetnlp/normalizer
@@ -264,7 +267,8 @@ To see list of all available options, do `python training.py -h`. There are two 
 
 
 #### Finetuning
-For finetuning, a minimal example is as follows:
+For finetuning, a minimal example is as follows:<br>
+[The following command snipet will run the script in debugging mode. To run full training set --debug False]
 
 ```bash
 $ python training.py \
@@ -283,11 +287,23 @@ $ python training.py \
     --max_length 256 \
 ```
 
+#### Downloading Trained Weights
+All of the experimented weights are resides in this drive <a href="https://drive.google.com/file/d/1IHYJbYYjC1x3XWk5aQ8qdGeNYOHIM70q/view?usp=drive_link">link <a> . Please download these weights files and put them into a folder named `Models`. <br>
+You can also download by running these bash commands in terminal.<br>
+
+```bash
+$ pip install gdown
+$ gdown --id 1IHYJbYYjC1x3XWk5aQ8qdGeNYOHIM70q
+$ unzip Models.zip
+```
+
 ### Testing
 This script run testing on test dataset and returns model prformance (f1_score).<br>
 
 To see list of all available options, do `python testing.py -h`
 N.B: This script is build for data format as dataset-1. Please data in proper format.  
+
+> If you want to run test on already trained model, please run the following command for d
 
 ```bash
 $ python testing.py \
@@ -298,7 +314,14 @@ $ python testing.py \
     --max_length 256 \
 ```
 
+N.B: To run with proper weights and proper model name please follow the following format.
 
+| **Model**                      |    **model_name**                                        | **model_checkpoint** |
+|:------------------------------:|:--------------------------------------------------------:|:--------------------------------
+| bangla-bert-ner-finetuned      |"nafi-zaman/celloscope-28000-ner-banglabert-finetuned"    | "./Models/banglabert-ner-finetuned.bin"    |
+| bangla-bert-base               | "csebuetnlp/banglabert"                                  | "./Models/bangla-bert-base.bin"          |
+| bangla-bert-large              |"csebuetnlp/banglabert_large"                             | "./Models/bangla-bert-large.bin"          |
+| mbert                          |"nafi-zaman/mbert-finetuned-ner"                          | "Models/mbert.bin"          |
 
  ### Inference 
 This inference script runs as an end-to-end inference style that means it will take a text string or list of texts and extract names from these given inputs.<br>
@@ -316,4 +339,4 @@ $ python inference.py \
     --model_checkpoint "./Models/best_model_0.bin"
 ```
 
-
+#### N.B: Please adjust certain commands if you are running these in windows or MacOS
