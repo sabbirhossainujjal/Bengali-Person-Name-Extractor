@@ -224,10 +224,11 @@ Bengali_NER/
     └── data_preprocessing.py
     └── training_utils.py
     └── inference_utils.py
+├── notebooks/
+    └── Person_Name_Extractor.ipynb
 ├── training.py
 ├── testing.py
 ├── inference.py
-├── Person_Name_Extractor.ipynb
 └── requirements.txt
 
 ```
@@ -241,7 +242,7 @@ Bengali_NER/
 * `testing.py`: Computes model performance on test dataset and returns metrics values. <br>
 * `inference.py`: End-to-End inference script. Combines all helper functions for inference and do end-to-end inference. <br>
 * `requirements.txt`: All required module list.
-* `Person_Name_Extractor.ipynb`: All code are combined in one jupyter notebook to run interactively.
+* `notebooks/Person_Name_Extractor.ipynb`: All code are combined in one jupyter notebook to run interactively.
 
 
  ### Setup
